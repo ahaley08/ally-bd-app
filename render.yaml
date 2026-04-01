@@ -1,0 +1,10 @@
+# Render YAML configuration
+app:
+  name: ally-bd-app
+  version: 1.0
+  services:
+    web:
+      type: web
+      env: node
+    database:
+      type: postgres
