@@ -192,6 +192,104 @@ Write a 2–3 sentence BD analyst note covering: (1) why this is or isn't a stro
   }
 });
 
+
+// ─── CLAUDE WEB SEARCH ─────────────────────────────────────────────────────────
+// Calls Anthropic API with web_search tool to find facility targets
+app.post('/api/web-search', async (req, res) => {
+  const { query, location, category } = req.body;
+  if (!query || !location) return res.status(400).json({ error: 'query and location required' });
+
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in environment variables.' });
+  }
+
+  const prompt = `You are a healthcare business development researcher for Ally Psychiatry, a multi-state behavioral health organization. Search the web and find a list of ${category} targets in ${location}.
+
+Search query to use: "${query} ${location}"
+
+Return ONLY a JSON array (no markdown, no explanation, just the raw JSON array) of up to 20 results. Each object must have these exact fields:
+- "name": organization name (string)
+- "address": street address if found, otherwise ""
+- "city": city (string)
+- "state": 2-letter state abbreviation (string)  
+- "phone": phone number if found, otherwise ""
+- "website": website URL if found, otherwise ""
+- "description": 1-sentence description of what this organization does (string)
+- "source": where you found this info (e.g. "official website", "Google listing", "state directory")
+
+Only include real, verifiable organizations. Do not fabricate entries. If you find fewer than 20 real results, return what you find.`;
+
+  try {
+    const postData = JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4000,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    const result = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'web-search-2025-03-05',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+
+      const apiReq = https.request(options, (apiRes) => {
+        let body = '';
+        apiRes.on('data', chunk => body += chunk);
+        apiRes.on('end', () => {
+          try { resolve(JSON.parse(body)); }
+          catch (e) { reject(new Error('Invalid JSON from Anthropic')); }
+        });
+      });
+      apiReq.on('error', reject);
+      apiReq.write(postData);
+      apiReq.end();
+    });
+
+    // Extract text from response — may go through tool use cycles
+    // Find the final text block in content
+    const content = result.content || [];
+    let jsonText = '';
+    for (const block of content) {
+      if (block.type === 'text' && block.text) {
+        jsonText = block.text;
+      }
+    }
+
+    // Strip any markdown code fences if present
+    jsonText = jsonText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
+    // Parse the JSON array
+    let results = [];
+    try {
+      // Find the JSON array — sometimes Claude adds a preamble
+      const arrStart = jsonText.indexOf('[');
+      const arrEnd = jsonText.lastIndexOf(']');
+      if (arrStart > -1 && arrEnd > arrStart) {
+        results = JSON.parse(jsonText.slice(arrStart, arrEnd + 1));
+      }
+    } catch (e) {
+      console.error('JSON parse error:', e.message, '\nRaw:', jsonText.slice(0, 500));
+      return res.status(500).json({ error: 'Failed to parse search results', raw: jsonText.slice(0, 500) });
+    }
+
+    res.json({ results, query: `${query} ${location}`, count: results.length });
+
+  } catch (e) {
+    console.error('Web search error:', e.message);
+    res.status(502).json({ error: 'Search failed: ' + e.message });
+  }
+});
+
 // ─── TEAM ──────────────────────────────────────────────────────────────────────
 app.get('/api/team', (req, res) => {
   res.json(DB.team_members.filter(t => t.active).sort((a, b) => a.name.localeCompare(b.name)));
