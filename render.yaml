@@ -1,10 +1,16 @@
-# Render YAML configuration
-app:
-  name: ally-bd-app
-  version: 1.0
-  services:
-    web:
-      type: web
-      env: node
-    database:
-      type: postgres
+services:
+  - type: web
+    name: ally-bd-app
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /opt/render/project/data
+    disk:
+      name: ally-bd-data
+      mountPath: /opt/render/project/data
+      sizeGB: 1
