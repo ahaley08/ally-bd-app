@@ -657,18 +657,43 @@
   <div class="nav-item" onclick="showPage('scorecard')" id="nav-scorecard">
     <span class="nav-icon">📋</span> Scorecard
   </div>
-  <div class="sidebar-label">Reference</div>
-  <div class="nav-item" onclick="showPage('hospitals')" id="nav-hospitals">
-    <span class="nav-icon">🏨</span> Hospitals
-  </div>
-  <div class="nav-item" onclick="showPage('rhc')" id="nav-rhc">
-    <span class="nav-icon">🏡</span> RHC Facilities
-  </div>
+  <div class="sidebar-label">Provider Sourcing</div>
   <div class="nav-item" onclick="showPage('sourcing')" id="nav-sourcing">
     <span class="nav-icon">🔬</span> Provider Sourcing
   </div>
   <div class="nav-item" onclick="showPage('retiring')" id="nav-retiring">
     <span class="nav-icon">🎯</span> Retiring Providers
+  </div>
+  <div class="nav-item" onclick="showPage('bh-sourcing')" id="nav-bh-sourcing">
+    <span class="nav-icon">🧠</span> Behavioral Health
+  </div>
+  <div class="sidebar-label">Facility Sourcing</div>
+  <div class="nav-item" onclick="showPage('hosp-sourcing')" id="nav-hosp-sourcing">
+    <span class="nav-icon">🏨</span> Hospitals
+  </div>
+  <div class="nav-item" onclick="showPage('rhc-sourcing')" id="nav-rhc-sourcing">
+    <span class="nav-icon">🏡</span> RHC / FQHC
+  </div>
+  <div class="nav-item" onclick="showPage('snf-sourcing')" id="nav-snf-sourcing">
+    <span class="nav-icon">🛏</span> SNF / LTC
+  </div>
+  <div class="nav-item" onclick="showPage('al-sourcing')" id="nav-al-sourcing">
+    <span class="nav-icon">🏠</span> Assisted Living
+  </div>
+  <div class="nav-item" onclick="showPage('bhc-sourcing')" id="nav-bhc-sourcing">
+    <span class="nav-icon">🏛</span> Community BHC
+  </div>
+  <div class="nav-item" onclick="showPage('sud-sourcing')" id="nav-sud-sourcing">
+    <span class="nav-icon">💊</span> Substance Abuse
+  </div>
+  <div class="nav-item" onclick="showPage('corr-sourcing')" id="nav-corr-sourcing">
+    <span class="nav-icon">🔒</span> Correctional
+  </div>
+  <div class="nav-item" onclick="showPage('school-sourcing')" id="nav-school-sourcing">
+    <span class="nav-icon">🎓</span> Schools
+  </div>
+  <div class="nav-item" onclick="showPage('emp-sourcing')" id="nav-emp-sourcing">
+    <span class="nav-icon">🏢</span> Employers
   </div>
   <div class="sidebar-label">Admin</div>
   <div class="nav-item" onclick="showPage('team')" id="nav-team">
@@ -848,64 +873,8 @@
   </div>
 
   <!-- HOSPITALS -->
-  <div class="page" id="page-hospitals">
-    <div class="card">
-      <div class="card-header">
-        <div class="search-bar" style="flex:1;">
-          <div class="search-input-wrap" style="max-width:300px;">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Search hospitals..." id="hosp-search" oninput="searchHospitals()">
-          </div>
-          <select class="form-control" style="width:120px;" id="hosp-state" onchange="searchHospitals()">
-            <option value="">All States</option>
-          </select>
-        </div>
-        <span id="hosp-count" class="text-sm text-muted"></span>
-      </div>
-      <div id="hosp-empty" class="empty-state" style="display:none;">
-        <div class="empty-state-icon">🏨</div>
-        <p style="margin-bottom:12px;">No hospital data loaded yet.</p>
-        <button class="btn btn-primary btn-sm" onclick="showPage('import')">Import Hospital Data</button>
-      </div>
-      <div class="table-wrap" id="hosp-table-wrap">
-        <table>
-          <thead><tr><th>Facility Name</th><th>City</th><th>State</th><th>Type</th><th>Rating</th><th>Phone</th><th>Actions</th></tr></thead>
-          <tbody id="hosp-table-body"></tbody>
-        </table>
-      </div>
-      <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;" id="hosp-pagination"></div>
-    </div>
-  </div>
 
   <!-- RHC -->
-  <div class="page" id="page-rhc">
-    <div class="card">
-      <div class="card-header">
-        <div class="search-bar" style="flex:1;">
-          <div class="search-input-wrap" style="max-width:300px;">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Search RHC facilities..." id="rhc-search" oninput="searchRHC()">
-          </div>
-          <select class="form-control" style="width:120px;" id="rhc-state" onchange="searchRHC()">
-            <option value="">All States</option>
-          </select>
-        </div>
-        <span id="rhc-count" class="text-sm text-muted"></span>
-      </div>
-      <div id="rhc-empty" class="empty-state" style="display:none;">
-        <div class="empty-state-icon">🏡</div>
-        <p style="margin-bottom:12px;">No RHC data loaded yet.</p>
-        <button class="btn btn-primary btn-sm" onclick="showPage('import')">Import RHC Data</button>
-      </div>
-      <div class="table-wrap" id="rhc-table-wrap">
-        <table>
-          <thead><tr><th>Organization</th><th>DBA Name</th><th>City</th><th>State</th><th>NPI</th><th>Phone</th><th>Actions</th></tr></thead>
-          <tbody id="rhc-table-body"></tbody>
-        </table>
-      </div>
-      <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;" id="rhc-pagination"></div>
-    </div>
-  </div>
 
   <!-- ═══════════════════════════════════════════════════════════════════
        PROVIDER SOURCING PAGE — BD Machine Corridor Reference
@@ -1143,6 +1112,865 @@
   </div>
   <!-- END RETIRING PROVIDER SOURCING -->
 
+  <div class="page" id="page-hosp-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🏨 Hospital Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="hosp-sourcing-corridor" onchange="fsSrcCorridorChanged('hosp-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="hosp-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="hosp-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="hosp-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="hosp-sourcing-specialty" onchange="fsSrcRender('hosp-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="hosp-sourcing-run-btn" onclick="fsSrcRun('hosp-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for hospital organizations · NPI-2 (organizational) records · Click any row to add to pipeline</div>
+      </div>
+    </div>
+
+    <div id="hosp-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="hosp-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs hosp-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('hosp-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs hosp-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('hosp-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs hosp-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('hosp-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="hosp-sourcing-filter"
+            oninput="fsSrcRender('hosp-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="hosp-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="hosp-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="hosp-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🏨</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for hospital facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="hosp-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="hosp-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-rhc-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🏡 RHC / FQHC Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="rhc-sourcing-corridor" onchange="fsSrcCorridorChanged('rhc-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="rhc-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="rhc-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="rhc-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="rhc-sourcing-specialty" onchange="fsSrcRender('rhc-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="rhc-sourcing-run-btn" onclick="fsSrcRun('rhc-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for Rural Health Clinics and Federally Qualified Health Centers</div>
+      </div>
+    </div>
+
+    <div id="rhc-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="rhc-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs rhc-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('rhc-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs rhc-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('rhc-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs rhc-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('rhc-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="rhc-sourcing-filter"
+            oninput="fsSrcRender('rhc-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="rhc-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="rhc-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="rhc-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🏡</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for rhc / fqhc facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="rhc-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="rhc-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-snf-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🛏 SNF / LTC Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="snf-sourcing-corridor" onchange="fsSrcCorridorChanged('snf-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="snf-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="snf-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="snf-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="snf-sourcing-specialty" onchange="fsSrcRender('snf-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="snf-sourcing-run-btn" onclick="fsSrcRun('snf-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for skilled nursing facilities and long-term care organizations</div>
+      </div>
+    </div>
+
+    <div id="snf-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="snf-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs snf-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('snf-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs snf-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('snf-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs snf-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('snf-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="snf-sourcing-filter"
+            oninput="fsSrcRender('snf-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="snf-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="snf-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="snf-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🛏</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for snf / ltc facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="snf-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="snf-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-al-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🏠 Assisted Living Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="al-sourcing-corridor" onchange="fsSrcCorridorChanged('al-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="al-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="al-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="al-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="al-sourcing-specialty" onchange="fsSrcRender('al-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="al-sourcing-run-btn" onclick="fsSrcRun('al-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for assisted living, memory care, and residential care facilities</div>
+      </div>
+    </div>
+
+    <div id="al-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="al-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs al-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('al-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs al-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('al-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs al-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('al-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="al-sourcing-filter"
+            oninput="fsSrcRender('al-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="al-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="al-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="al-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🏠</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for assisted living facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="al-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="al-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-bhc-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🏛 Community BHC Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="bhc-sourcing-corridor" onchange="fsSrcCorridorChanged('bhc-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="bhc-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="bhc-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="bhc-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="bhc-sourcing-specialty" onchange="fsSrcRender('bhc-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="bhc-sourcing-run-btn" onclick="fsSrcRun('bhc-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for community mental health centers, outpatient BH clinics, and crisis centers</div>
+      </div>
+    </div>
+
+    <div id="bhc-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="bhc-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs bhc-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('bhc-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs bhc-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('bhc-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs bhc-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('bhc-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="bhc-sourcing-filter"
+            oninput="fsSrcRender('bhc-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="bhc-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="bhc-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="bhc-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🏛</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for community bhc facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="bhc-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="bhc-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-sud-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">💊 Substance Abuse Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="sud-sourcing-corridor" onchange="fsSrcCorridorChanged('sud-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="sud-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="sud-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="sud-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="sud-sourcing-specialty" onchange="fsSrcRender('sud-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="sud-sourcing-run-btn" onclick="fsSrcRun('sud-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for residential SUD treatment facilities, halfway houses, and outpatient SUD clinics</div>
+      </div>
+    </div>
+
+    <div id="sud-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="sud-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs sud-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('sud-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs sud-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('sud-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs sud-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('sud-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="sud-sourcing-filter"
+            oninput="fsSrcRender('sud-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="sud-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="sud-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="sud-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">💊</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for substance abuse facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="sud-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="sud-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-corr-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🔒 Correctional Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="corr-sourcing-corridor" onchange="fsSrcCorridorChanged('corr-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="corr-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="corr-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="corr-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="corr-sourcing-specialty" onchange="fsSrcRender('corr-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="corr-sourcing-run-btn" onclick="fsSrcRun('corr-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for correctional healthcare facilities and jail/prison health clinics</div>
+      </div>
+    </div>
+
+    <div id="corr-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="corr-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs corr-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('corr-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs corr-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('corr-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs corr-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('corr-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="corr-sourcing-filter"
+            oninput="fsSrcRender('corr-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="corr-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="corr-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="corr-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🔒</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for correctional facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="corr-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="corr-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-school-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🎓 School Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="school-sourcing-corridor" onchange="fsSrcCorridorChanged('school-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="school-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="school-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="school-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="school-sourcing-specialty" onchange="fsSrcRender('school-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="school-sourcing-run-btn" onclick="fsSrcRun('school-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for school-based health clinics and student health centers</div>
+      </div>
+    </div>
+
+    <div id="school-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="school-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs school-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('school-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs school-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('school-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs school-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('school-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="school-sourcing-filter"
+            oninput="fsSrcRender('school-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="school-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="school-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="school-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🎓</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for school facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="school-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="school-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-emp-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🏢 Employer Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="emp-sourcing-corridor" onchange="fsSrcCorridorChanged('emp-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="emp-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="emp-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="emp-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="emp-sourcing-specialty" onchange="fsSrcRender('emp-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="emp-sourcing-run-btn" onclick="fsSrcRun('emp-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for occupational health clinics and employer-based health organizations · Note: most employers are not in NPI — supplement with LinkedIn, local Chamber of Commerce, and SHRM directories</div>
+      </div>
+    </div>
+
+    <div id="emp-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="emp-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs emp-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('emp-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs emp-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('emp-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs emp-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('emp-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="emp-sourcing-filter"
+            oninput="fsSrcRender('emp-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
+            <tbody id="emp-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="emp-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="emp-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🏢</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for employer facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="emp-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="emp-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-bh-sourcing">
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">🧠 Behavioral Health Providers Sourcing</span>
+        <span class="text-xs text-muted">Live NPI Registry Search · NPI-1 Organizations</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1 1 240px;">
+            <label class="form-label">Geography / Corridor</label>
+            <select class="form-control" id="bh-sourcing-corridor" onchange="fsSrcCorridorChanged('bh-sourcing')">
+              <option value="nashville">Nashville Corridor (TN)</option>
+              <option value="chattanooga">Chattanooga Corridor (TN)</option>
+              <option value="knoxville">Knoxville Corridor (TN)</option>
+              <option value="huntsville">Huntsville / North AL</option>
+              <option value="birmingham">Birmingham Metro (AL)</option>
+              <option value="louisville">Louisville Corridor (KY)</option>
+              <option value="charleston">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Geography</option>
+            </select>
+          </div>
+          <div id="bh-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
+            <div style="display:flex;gap:10px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="bh-sourcing-custom-city" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 70px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="bh-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="flex:1 1 220px;">
+            <label class="form-label">Type</label>
+            <select class="form-control" id="bh-sourcing-specialty" onchange="fsSrcRender('bh-sourcing')"></select>
+          </div>
+          <div class="form-group" style="flex:0 0 auto;">
+            <label class="form-label" style="visibility:hidden;">x</label>
+            <button class="btn btn-primary" id="bh-sourcing-run-btn" onclick="fsSrcRun('bh-sourcing')">Search</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for individual licensed behavioral health providers — psychiatrists, PMHNPs, psychologists, therapists, and counselors</div>
+      </div>
+    </div>
+
+    <div id="bh-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="bh-sourcing-result-count"></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs bh-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('bh-sourcing','all',this)">All</button>
+          <button class="btn btn-outline btn-xs bh-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('bh-sourcing','Primary',this)">Primary Tier</button>
+          <button class="btn btn-outline btn-xs bh-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('bh-sourcing','Secondary',this)">Secondary</button>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..." id="bh-sourcing-filter"
+            oninput="fsSrcRender('bh-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Provider</th><th>Practice / Org</th><th>Specialty</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Action</th></tr></thead>
+            <tbody id="bh-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="bh-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="bh-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🧠</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
+        <p>Searches the CMS NPI Registry for behavioral health providers facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      </div>
+    </div>
+
+    <div id="bh-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="bh-sourcing-loading-msg">Searching NPI Registry...</div>
+      </div>
+    </div>
+  </div>
   <!-- TEAM -->
   <div class="page" id="page-team">
     <div class="card">
@@ -1431,7 +2259,14 @@ function showPage(name) {
   const titles = {
     dashboard:'Dashboard', pipeline:'Pipeline View', opportunities:'Opportunities',
     scorecard:'Scorecard Builder', hospitals:'Hospital Reference', rhc:'RHC Facilities',
-    sourcing:'Provider Sourcing', retiring:'Retiring Provider Sourcing', team:'BD Team', import:'Import Data'
+    sourcing:'Provider Sourcing', retiring:'Retiring Provider Sourcing',
+    'bh-sourcing':'Behavioral Health Provider Sourcing',
+    'hosp-sourcing':'Hospital Sourcing', 'rhc-sourcing':'RHC / FQHC Sourcing',
+    'snf-sourcing':'SNF / LTC Sourcing', 'al-sourcing':'Assisted Living Sourcing',
+    'bhc-sourcing':'Community BHC Sourcing', 'sud-sourcing':'Substance Abuse Sourcing',
+    'corr-sourcing':'Correctional Center Sourcing', 'school-sourcing':'School Sourcing',
+    'emp-sourcing':'Employer Sourcing',
+    team:'BD Team', import:'Import Data'
   };
   const subs = {
     sourcing: 'NPI Registry Search · Primary Care & All Specialties',
@@ -1440,10 +2275,9 @@ function showPage(name) {
   document.getElementById('page-title').textContent = titles[name] || name;
   document.getElementById('page-sub').textContent = subs[name] || 'Business Development Tracker';
   // Hide new opp button on sourcing page
-  document.getElementById('topbar-new-opp-btn').style.display = (name === 'sourcing' || name === 'retiring') ? 'none' : '';
+  const hideBtnPages = ['sourcing','retiring','bh-sourcing','hosp-sourcing','rhc-sourcing','snf-sourcing','al-sourcing','bhc-sourcing','sud-sourcing','corr-sourcing','school-sourcing','emp-sourcing'];
+  document.getElementById('topbar-new-opp-btn').style.display = hideBtnPages.includes(name) ? 'none' : '';
   if (name === 'pipeline') renderKanban();
-  if (name === 'hospitals') searchHospitals();
-  if (name === 'rhc') searchRHC();
   if (name === 'scorecard') populateScorecardSelect();
 }
 
@@ -1899,88 +2733,6 @@ async function removeTeamMember(id) {
   await api('DELETE', '/api/team/' + id);
   await loadTeam();
   toast('Member removed');
-}
-
-// ── HOSPITALS ─────────────────────────────────────────────────────────────────
-let hospTotal = 0;
-async function searchHospitals() {
-  const q = document.getElementById('hosp-search')?.value || '';
-  const state = document.getElementById('hosp-state')?.value || '';
-  const data = await api('GET', `/api/hospitals?q=${encodeURIComponent(q)}&state=${state}&limit=50&offset=${hospOffset}`);
-  hospTotal = data.total;
-  const tbody = document.getElementById('hosp-table-body');
-  const empty = document.getElementById('hosp-empty');
-  const wrap = document.getElementById('hosp-table-wrap');
-  if (data.total === 0 && !q && !state) {
-    empty.style.display = 'block'; wrap.style.display = 'none';
-    document.getElementById('hosp-count').textContent = ''; return;
-  }
-  empty.style.display = 'none'; wrap.style.display = 'block';
-  document.getElementById('hosp-count').textContent = `${data.total.toLocaleString()} hospitals`;
-  tbody.innerHTML = data.results.map(h => `<tr>
-    <td style="font-weight:600;">${h.facility_name}</td>
-    <td>${h.city || '—'}</td><td>${h.state}</td>
-    <td class="text-xs text-muted">${h.hospital_type || '—'}</td>
-    <td>${h.overall_rating ? '⭐'.repeat(Math.min(h.overall_rating,5)) : '—'}</td>
-    <td>${h.phone || '—'}</td>
-    <td><button class="btn btn-success btn-xs" onclick="addHospAsOpp('${h.facility_name.replace(/'/g,"\\'")}',${JSON.stringify(h.city||'')},'${h.state}','${h.phone||''}')">+ Add to Pipeline</button></td>
-  </tr>`).join('');
-  renderPagination('hosp-pagination', hospOffset, hospTotal, 50, (o) => { hospOffset = o; searchHospitals(); });
-}
-
-function addHospAsOpp(name, city, state, phone) {
-  document.getElementById('new-name').value = name;
-  document.getElementById('new-type').value = 'Hospital';
-  document.getElementById('new-state').value = state;
-  document.getElementById('new-city').value = city;
-  openModal('new-opp-modal');
-}
-
-// ── RHC ───────────────────────────────────────────────────────────────────────
-let rhcTotal = 0;
-async function searchRHC() {
-  const q = document.getElementById('rhc-search')?.value || '';
-  const state = document.getElementById('rhc-state')?.value || '';
-  const data = await api('GET', `/api/rhc?q=${encodeURIComponent(q)}&state=${state}&limit=50&offset=${rhcOffset}`);
-  rhcTotal = data.total;
-  const tbody = document.getElementById('rhc-table-body');
-  const empty = document.getElementById('rhc-empty');
-  const wrap = document.getElementById('rhc-table-wrap');
-  if (data.total === 0 && !q && !state) {
-    empty.style.display = 'block'; wrap.style.display = 'none';
-    document.getElementById('rhc-count').textContent = ''; return;
-  }
-  empty.style.display = 'none'; wrap.style.display = 'block';
-  document.getElementById('rhc-count').textContent = `${data.total.toLocaleString()} RHC facilities`;
-  tbody.innerHTML = data.results.map(r => `<tr>
-    <td style="font-weight:600;">${r.organization_name || '—'}</td>
-    <td class="text-muted">${r.dba_name || '—'}</td>
-    <td>${r.city || '—'}</td><td>${r.state}</td>
-    <td class="text-xs text-muted">${r.npi || '—'}</td>
-    <td>${r.phone || '—'}</td>
-    <td><button class="btn btn-success btn-xs" onclick="addRHCAsOpp('${(r.dba_name||r.organization_name||'').replace(/'/g,"\\'")}',${JSON.stringify(r.city||'')},'${r.state}','${r.npi||''}')">+ Add to Pipeline</button></td>
-  </tr>`).join('');
-  renderPagination('rhc-pagination', rhcOffset, rhcTotal, 50, (o) => { rhcOffset = o; searchRHC(); });
-}
-
-function addRHCAsOpp(name, city, state, npi) {
-  document.getElementById('new-name').value = name;
-  document.getElementById('new-type').value = 'RHC';
-  document.getElementById('new-state').value = state;
-  document.getElementById('new-city').value = city;
-  openModal('new-opp-modal');
-}
-
-function renderPagination(containerId, offset, total, limit, cb) {
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  const page = Math.floor(offset / limit) + 1;
-  const pages = Math.ceil(total / limit);
-  el.innerHTML = `
-    <button class="btn btn-outline btn-xs" ${offset === 0 ? 'disabled' : ''} onclick="(${cb})(${Math.max(0, offset-limit)})">← Prev</button>
-    <span class="text-sm text-muted">Page ${page} of ${pages}</span>
-    <button class="btn btn-outline btn-xs" ${offset + limit >= total ? 'disabled' : ''} onclick="(${cb})(${offset+limit})">Next →</button>
-  `;
 }
 
 // ── IMPORT ────────────────────────────────────────────────────────────────────
@@ -2658,6 +3410,386 @@ async function retGetAINote(npi) {
   }
   btn.disabled = false; btn.textContent = '✦ Hide BD Note';
 }
+// ══════════════════════════════════════════════════════════════════════════════
+//  FACILITY SOURCING — Shared Engine for 10 NPI-powered pages
+// ══════════════════════════════════════════════════════════════════════════════
+
+// All taxonomy definitions keyed by specialty_key
+const FS_TAXONOMY = {
+  hospitals: {
+    enumType: 'NPI-2',
+    oppType:  'Hospital',
+    options: [
+      { label:'All Hospitals',             codes:['282N00000X','283Q00000X','283X00000X','286500000X'] },
+      { label:'General Acute Care',        codes:['282N00000X'] },
+      { label:'Critical Access Hospital',  codes:['282NC2000X'] },
+      { label:'Psychiatric Hospital',      codes:['283Q00000X'] },
+      { label:'Rehabilitation Hospital',   codes:['283X00000X'] },
+      { label:'Long Term Acute Care',      codes:['282NC0060X'] },
+    ]
+  },
+  rhc: {
+    enumType: 'NPI-2',
+    oppType:  'RHC',
+    options: [
+      { label:'All RHC / FQHC',            codes:['261QR1300X','261QF0400X','261Q00000X'] },
+      { label:'Rural Health Clinic',        codes:['261QR1300X'] },
+      { label:'Federally Qualified (FQHC)', codes:['261QF0400X'] },
+      { label:'Community Health Center',    codes:['261Q00000X'] },
+    ]
+  },
+  snf: {
+    enumType: 'NPI-2',
+    oppType:  'Other',
+    options: [
+      { label:'All SNF / LTC',              codes:['314000000X','3140N1450X','315D00000X'] },
+      { label:'Skilled Nursing Facility',   codes:['314000000X'] },
+      { label:'Nursing Care Facility',      codes:['3140N1450X'] },
+      { label:'Intermediate Care Facility', codes:['315D00000X'] },
+    ]
+  },
+  assisted_living: {
+    enumType: 'NPI-2',
+    oppType:  'Other',
+    options: [
+      { label:'All Assisted Living / Memory Care', codes:['311500000X','310400000X','311Z00000X','313M00000X'] },
+      { label:'Assisted Living Facility',           codes:['311500000X'] },
+      { label:'Custodial Care Facility',            codes:['310400000X'] },
+      { label:'Memory Care / Dementia',             codes:['311Z00000X'] },
+      { label:'Nursing Facility',                   codes:['313M00000X'] },
+    ]
+  },
+  community_bhc: {
+    enumType: 'NPI-2',
+    oppType:  'Other',
+    options: [
+      { label:'All Community BH',               codes:['261QM0850X','261QM2500X','261QH0100X'] },
+      { label:'Mental Health Clinic',           codes:['261QM0850X'] },
+      { label:'Community MH Center',            codes:['261QM2500X'] },
+      { label:'Crisis Center',                  codes:['261QH0100X'] },
+      { label:'SUD Outpatient Clinic',          codes:['261QR0405X'] },
+    ]
+  },
+  substance_abuse: {
+    enumType: 'NPI-2',
+    oppType:  'Other',
+    options: [
+      { label:'All Substance Abuse',            codes:['324500000X','3245S0500X','261QR0405X'] },
+      { label:'Residential SUD Treatment',      codes:['324500000X'] },
+      { label:'Halfway House / Recovery Home',  codes:['3245S0500X'] },
+      { label:'SUD Outpatient Clinic',          codes:['261QR0405X'] },
+    ]
+  },
+  correctional: {
+    enumType: 'NPI-2',
+    oppType:  'Other',
+    options: [
+      { label:'All Correctional Health',        codes:['251G00000X','261QC1500X'] },
+      { label:'Correctional Facility',          codes:['251G00000X'] },
+      { label:'Correctional Care Clinic',       codes:['261QC1500X'] },
+    ]
+  },
+  schools: {
+    enumType: 'NPI-2',
+    oppType:  'Other',
+    options: [
+      { label:'All School Health',              codes:['261QS0112X','261QS1200X','261QE0700X'] },
+      { label:'School / Educational Clinic',    codes:['261QS0112X'] },
+      { label:'Student Health Center',          codes:['261QS1200X'] },
+    ]
+  },
+  employers: {
+    enumType: 'NPI-2',
+    oppType:  'Other',
+    options: [
+      { label:'All Occupational Health',        codes:['261QO0100X','3336C0003X'] },
+      { label:'Occupational Health Clinic',     codes:['261QO0100X'] },
+      { label:'Corporate / Worksite Health',    codes:['3336C0003X'] },
+    ]
+  },
+  behavioral_health: {
+    enumType: 'NPI-1',
+    oppType:  'Practice',
+    options: [
+      { label:'All Behavioral Health',      codes:['2084P0800X','363LP0808X','103TC0700X','1041C0700X','101Y00000X','106H00000X','2084A2900X'] },
+      { label:'Psychiatry (MD/DO)',         codes:['2084P0800X'] },
+      { label:'PMHNP',                      codes:['363LP0808X'] },
+      { label:'Psychologist',               codes:['103TC0700X'] },
+      { label:'Clinical Social Work',       codes:['1041C0700X'] },
+      { label:'Counselor / Therapist',      codes:['101Y00000X'] },
+      { label:'Addiction Medicine',         codes:['2084A2900X','207RA0401X'] },
+      { label:'Marriage & Family Therapy',  codes:['106H00000X'] },
+    ]
+  }
+};
+
+// Map page_id → specialty_key
+const FS_PAGE_MAP = {
+  'hosp-sourcing':   'hospitals',
+  'rhc-sourcing':    'rhc',
+  'snf-sourcing':    'snf',
+  'al-sourcing':     'assisted_living',
+  'bhc-sourcing':    'community_bhc',
+  'sud-sourcing':    'substance_abuse',
+  'corr-sourcing':   'correctional',
+  'school-sourcing': 'schools',
+  'emp-sourcing':    'employers',
+  'bh-sourcing':     'behavioral_health',
+};
+
+// Per-page state
+const fsState = {};
+function fsGetState(pageId) {
+  if (!fsState[pageId]) fsState[pageId] = { results: [], tierFilter: 'all', aiNotes: {} };
+  return fsState[pageId];
+}
+
+// Called when corridor dropdown changes
+function fsSrcCorridorChanged(pageId) {
+  const val = document.getElementById(`${pageId}-corridor`).value;
+  const wrap = document.getElementById(`${pageId}-custom-wrap`);
+  if (wrap) wrap.style.display = val === 'custom' ? 'flex' : 'none';
+}
+
+// Called by showPage to init specialty dropdown for a page
+function fsSrcInitPage(pageId) {
+  const specKey = FS_PAGE_MAP[pageId];
+  if (!specKey) return;
+  const sel = document.getElementById(`${pageId}-specialty`);
+  if (!sel) return;
+  const opts = FS_TAXONOMY[specKey].options;
+  sel.innerHTML = opts.map(o => `<option value="${o.codes.join(',')}">${o.label}</option>`).join('');
+}
+
+// Tier filter button handler
+function fsSrcTierFilter(pageId, tier, el) {
+  fsGetState(pageId).tierFilter = tier;
+  document.querySelectorAll(`.${pageId}-tf`).forEach(b => { b.classList.remove('btn-primary'); b.classList.add('btn-outline'); });
+  el.classList.remove('btn-outline'); el.classList.add('btn-primary');
+  fsSrcRender(pageId);
+}
+
+// Main search runner
+async function fsSrcRun(pageId) {
+  const specKey  = FS_PAGE_MAP[pageId];
+  const taxDef   = FS_TAXONOMY[specKey];
+  const corridorKey = document.getElementById(`${pageId}-corridor`).value;
+  const customCity  = (document.getElementById(`${pageId}-custom-city`)?.value || '').trim();
+  const customState = (document.getElementById(`${pageId}-custom-state`)?.value || '').trim().toUpperCase();
+  const codes = document.getElementById(`${pageId}-specialty`).value.split(',');
+  const btn = document.getElementById(`${pageId}-run-btn`);
+
+  if (corridorKey === 'custom' && (!customCity || !customState)) {
+    toast('Enter a city and state for custom search', 'error'); return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Searching...';
+  document.getElementById(`${pageId}-empty-state`).style.display = 'none';
+  document.getElementById(`${pageId}-results-area`).style.display = 'none';
+  document.getElementById(`${pageId}-loading-state`).style.display = 'block';
+
+  try {
+    let cities, state;
+    if (corridorKey === 'custom') {
+      cities = [customCity]; state = customState;
+    } else {
+      const c = NPI_CORRIDORS[corridorKey];
+      cities = c.cities; state = c.state;
+    }
+
+    const allRaw = [];
+    const enumType = taxDef.enumType;
+    for (let i = 0; i < cities.length; i++) {
+      document.getElementById(`${pageId}-loading-msg`).textContent =
+        `Searching ${cities[i]}, ${state}... (${i+1}/${cities.length})`;
+      // Build NPI API URL — Type 2 searches by organization_name city/state
+      const url = `https://npiregistry.cms.hhs.gov/api/?version=2.1&city=${encodeURIComponent(cities[i])}&state=${encodeURIComponent(state)}&enumeration_type=${encodeURIComponent(enumType)}&limit=200`;
+      const resp = await fetch(`/api/npi-proxy?url=${encodeURIComponent(url)}`);
+      if (!resp.ok) throw new Error('NPI lookup failed');
+      const data = await resp.json();
+      const results = data.results || [];
+      // Filter by taxonomy
+      const filtered = results.filter(r =>
+        (r.taxonomies || []).some(t => codes.includes(t.code))
+      );
+      allRaw.push(...filtered);
+      if (i < cities.length - 1) await new Promise(res => setTimeout(res, 400));
+    }
+
+    // Deduplicate by NPI
+    const seen = new Set();
+    const unique = allRaw.filter(r => { if (seen.has(r.number)) return false; seen.add(r.number); return true; });
+
+    // Parse
+    const state2 = fsGetState(pageId);
+    state2.results = unique.map(r => fsSrcParseRecord(r, enumType)).filter(p => !p.deactivated);
+    state2.tierFilter = 'all';
+    document.querySelectorAll(`.${pageId}-tf`).forEach(b => { b.classList.remove('btn-primary'); b.classList.add('btn-outline'); });
+    const allBtn = document.querySelector(`.${pageId}-tf[data-tier="all"]`);
+    if (allBtn) { allBtn.classList.remove('btn-outline'); allBtn.classList.add('btn-primary'); }
+
+    document.getElementById(`${pageId}-loading-state`).style.display = 'none';
+    document.getElementById(`${pageId}-results-area`).style.display = 'block';
+    fsSrcRender(pageId);
+
+  } catch(e) {
+    document.getElementById(`${pageId}-loading-state`).style.display = 'none';
+    document.getElementById(`${pageId}-empty-state`).style.display = 'block';
+    toast('Search failed: ' + e.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Search';
+}
+
+function fsSrcParseRecord(r, enumType) {
+  const basic = r.basic || {};
+  const addresses = r.addresses || [];
+  const taxonomies = r.taxonomies || [];
+  const addr = addresses.find(a => a.address_purpose === 'LOCATION') || addresses[0] || {};
+  const tax  = taxonomies.find(t => t.primary) || taxonomies[0] || {};
+
+  if (enumType === 'NPI-2') {
+    return {
+      npi:     r.number,
+      name:    basic.organization_name || basic.name || '—',
+      taxDesc: tax.desc || '—',
+      taxCode: tax.code || '',
+      city:    addr.city || '',
+      state:   addr.state || '',
+      zip:     addr.postal_code || '',
+      phone:   addr.telephone_number || '',
+      address: [addr.address_1, addr.city, addr.state, addr.postal_code].filter(Boolean).join(', '),
+      deactivated: basic.status === 'D',
+      enumType: 'NPI-2'
+    };
+  } else {
+    // NPI-1 individual
+    const enrollYear = basic.enumeration_date ? parseInt(basic.enumeration_date.split('-')[0]) : null;
+    return {
+      npi:         r.number,
+      name:        `${basic.first_name||''} ${basic.last_name||''}`.trim(),
+      credential:  basic.credential || '',
+      orgName:     basic.organization_name || '',
+      taxDesc:     tax.desc || '—',
+      taxCode:     tax.code || '',
+      city:        addr.city || '',
+      state:       addr.state || '',
+      zip:         addr.postal_code || '',
+      phone:       addr.telephone_number || '',
+      address:     [addr.address_1, addr.city, addr.state, addr.postal_code].filter(Boolean).join(', '),
+      enrollYear,
+      deactivated: basic.status === 'D',
+      enumType: 'NPI-1'
+    };
+  }
+}
+
+function fsSrcRender(pageId) {
+  const specKey = FS_PAGE_MAP[pageId];
+  const taxDef  = FS_TAXONOMY[specKey];
+  const state2  = fsGetState(pageId);
+  const q = (document.getElementById(`${pageId}-filter`)?.value || '').toLowerCase();
+
+  let data = [...state2.results];
+
+  // Text filter
+  if (q) data = data.filter(r =>
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.city||'').toLowerCase().includes(q) ||
+    (r.taxDesc||'').toLowerCase().includes(q) ||
+    (r.orgName||'').toLowerCase().includes(q)
+  );
+
+  document.getElementById(`${pageId}-result-count`).textContent = `${data.length} results`;
+
+  const tbody = document.getElementById(`${pageId}-tbody`);
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-light);padding:24px;">No results found.</td></tr>`;
+    document.getElementById(`${pageId}-footer`).textContent = '';
+    return;
+  }
+
+  tbody.innerHTML = data.map((p, i) => {
+    if (p.enumType === 'NPI-2') {
+      return `<tr onclick="fsSrcAddToOpp('${pageId}',${i})" style="cursor:pointer;">
+        <td class="text-xs text-muted">${i+1}</td>
+        <td style="font-weight:600;">${p.name}</td>
+        <td>${p.city||'—'}</td>
+        <td>${p.state||'—'}</td>
+        <td class="text-xs">${p.phone||'—'}</td>
+        <td class="text-xs text-muted">${p.npi}</td>
+        <td class="text-xs text-muted" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.taxDesc}</td>
+        <td><button class="btn btn-success btn-xs" onclick="event.stopPropagation();fsSrcAddToOpp('${pageId}',${i})">+ Pipeline</button></td>
+      </tr>`;
+    } else {
+      // NPI-1 individual
+      return `<tr onclick="fsSrcAddToOpp('${pageId}',${i})" style="cursor:pointer;">
+        <td class="text-xs text-muted">${i+1}</td>
+        <td style="font-weight:600;">${p.name}${p.credential?', '+p.credential:''}</td>
+        <td style="font-size:12px;color:var(--text-light);">${p.orgName||'<em>Solo</em>'}</td>
+        <td class="text-xs">${p.taxDesc}</td>
+        <td>${p.city||'—'}</td>
+        <td>${p.state||'—'}</td>
+        <td class="text-xs">${p.phone||'—'}</td>
+        <td class="text-xs text-muted">${p.npi}</td>
+        <td><button class="btn btn-success btn-xs" onclick="event.stopPropagation();fsSrcAddToOpp('${pageId}',${i})">+ Pipeline</button></td>
+      </tr>`;
+    }
+  }).join('');
+
+  document.getElementById(`${pageId}-footer`).textContent =
+    `${data.length} of ${state2.results.length} results · Data: CMS NPPES NPI Registry · Click any row to add to pipeline`;
+}
+
+function fsSrcAddToOpp(pageId, idx) {
+  const specKey = FS_PAGE_MAP[pageId];
+  const taxDef  = FS_TAXONOMY[specKey];
+  const state2  = fsGetState(pageId);
+
+  // Get current filtered+rendered data (re-apply filter)
+  const q = (document.getElementById(`${pageId}-filter`)?.value || '').toLowerCase();
+  let data = [...state2.results];
+  if (q) data = data.filter(r =>
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.city||'').toLowerCase().includes(q) ||
+    (r.taxDesc||'').toLowerCase().includes(q) ||
+    (r.orgName||'').toLowerCase().includes(q)
+  );
+
+  const p = data[idx];
+  if (!p) return;
+
+  document.getElementById('new-name').value = p.name.substring(0,80);
+  document.getElementById('new-type').value = taxDef.oppType;
+  document.getElementById('new-state').value = p.state || '';
+  document.getElementById('new-city').value = p.city || '';
+  document.getElementById('new-source').value = 'Outbound';
+  document.getElementById('new-stage').value = 'Identified';
+
+  const noteLines = [
+    `NPI: ${p.npi}`,
+    `Type: ${p.taxDesc}`,
+    `Phone: ${p.phone || 'Unknown'}`,
+    `Address: ${p.address}`,
+  ];
+  if (p.enumType === 'NPI-1' && p.orgName) noteLines.push(`Organization: ${p.orgName}`);
+  if (p.enumType === 'NPI-1' && p.enrollYear) noteLines.push(`NPI Enrolled: ${p.enrollYear}`);
+  document.getElementById('new-notes').value = noteLines.join('\n');
+
+  openModal('new-opp-modal');
+}
+
+// Hook showPage to init specialty dropdowns on first visit
+const _origShowPage = showPage;
+showPage = function(name) {
+  _origShowPage(name);
+  // Init facility sourcing pages
+  const fsPageIds = ['hosp-sourcing','rhc-sourcing','snf-sourcing','al-sourcing',
+    'bhc-sourcing','sud-sourcing','corr-sourcing','school-sourcing','emp-sourcing','bh-sourcing'];
+  if (fsPageIds.includes(name)) {
+    fsSrcInitPage(name);
+  }
+};
+
 // ══════════════════════════════════════════════════════════════════════════════
 init();
 </script>
