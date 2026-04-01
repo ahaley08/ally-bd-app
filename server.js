@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -99,6 +100,97 @@ let DB = readDB();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ─── NPI PROXY ─────────────────────────────────────────────────────────────────
+// Proxies requests to the CMS NPI Registry to avoid browser CORS issues
+app.get('/api/npi-proxy', async (req, res) => {
+  const targetUrl = req.query.url;
+  if (!targetUrl || !targetUrl.startsWith('https://npiregistry.cms.hhs.gov/')) {
+    return res.status(400).json({ error: 'Invalid URL' });
+  }
+  try {
+    const data = await new Promise((resolve, reject) => {
+      https.get(targetUrl, (response) => {
+        let body = '';
+        response.on('data', chunk => body += chunk);
+        response.on('end', () => {
+          try { resolve(JSON.parse(body)); }
+          catch (e) { reject(new Error('Invalid JSON from NPI registry')); }
+        });
+      }).on('error', reject);
+    });
+    res.json(data);
+  } catch (e) {
+    console.error('NPI proxy error:', e.message);
+    res.status(502).json({ error: 'NPI registry lookup failed', detail: e.message });
+  }
+});
+
+// ─── BD NOTE GENERATOR (AI-powered via Anthropic) ─────────────────────────────
+app.post('/api/bd-note', async (req, res) => {
+  const { provider } = req.body;
+  if (!provider) return res.status(400).json({ error: 'No provider data' });
+
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_API_KEY) {
+    return res.json({ note: 'BD Note generation requires ANTHROPIC_API_KEY environment variable to be set in Render.' });
+  }
+
+  const prompt = `You are a healthcare business development analyst for Ally Psychiatry, a multi-state outpatient behavioral health organization that acquires retiring solo and small-group psychiatric practices.
+
+Analyze this provider as a potential acquisition/transition target:
+- Name: ${provider.providerName}${provider.credential ? ', ' + provider.credential : ''}
+- Practice/Org: ${provider.orgName || 'Solo listing (no group)'}
+- Specialty: ${provider.specialty}
+- Location: ${provider.city}, ${provider.state}
+- NPI Enrollment Year: ${provider.enrollYear || 'Unknown'}
+- Direct Phone: ${provider.phone || 'None on record'}
+- Sourcing Score: ${provider.score}/100 (Tier ${provider.tier})
+- Scoring factors: ${provider.scoringNotes.join('; ')}
+
+Write a 2–3 sentence BD analyst note covering: (1) why this is or isn't a strong acquisition target, (2) one key risk or next validation step, (3) recommended first outreach approach. Be direct and specific. No filler phrases.`;
+
+  try {
+    const postData = JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    const note = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+      const req = https.request(options, (resp) => {
+        let body = '';
+        resp.on('data', chunk => body += chunk);
+        resp.on('end', () => {
+          try {
+            const data = JSON.parse(body);
+            const text = data.content && data.content[0] && data.content[0].text;
+            resolve(text || 'Analysis unavailable.');
+          } catch (e) { reject(e); }
+        });
+      });
+      req.on('error', reject);
+      req.write(postData);
+      req.end();
+    });
+
+    res.json({ note });
+  } catch (e) {
+    console.error('BD note error:', e.message);
+    res.json({ note: 'Note generation failed. Verify ANTHROPIC_API_KEY is set in Render environment variables.' });
+  }
+});
 
 // ─── TEAM ──────────────────────────────────────────────────────────────────────
 app.get('/api/team', (req, res) => {
@@ -280,4 +372,7 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Ally BD App running on port ${PORT}`);
   console.log(`Database: ${DB_PATH}`);
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn('⚠ ANTHROPIC_API_KEY not set — BD Note generation will be disabled');
+  }
 });
