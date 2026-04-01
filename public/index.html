@@ -1675,13 +1675,13 @@
       <div class="card-header">
         <span class="card-title">🔒 Correctional Center Sourcing</span>
         <span class="text-xs text-muted" style="display:flex;align-items:center;gap:6px;">
-          <span style="background:#4285F4;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Google</span>
-          Powered Search
+          <span style="background:linear-gradient(135deg,#cc785c,#a85c8a);color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Claude AI</span>
+          Web Search
         </span>
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
+          <div class="form-group" style="flex:1 1 220px;">
             <label class="form-label">Geography / Corridor</label>
             <select class="form-control" id="corr-sourcing-corridor">
               <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
@@ -1702,13 +1702,13 @@
           </div>
           <div class="form-group" style="flex:1 1 260px;">
             <label class="form-label">Search Query</label>
-            <select class="form-control" id="corr-sourcing-query">
-                            <option value="county jail behavioral health services">county jail behavioral health services</option>
-              <option value="state prison mental health contract">state prison mental health contract</option>
+            <select class="form-control" id="corr-sourcing-query" onchange="csrcQueryChanged('corr-sourcing')">
+              <option value="county jail behavioral health services">county jail behavioral health services</option>
+              <option value="state prison mental health contract opportunities">state prison mental health contract opportunities</option>
               <option value="correctional facility psychiatry services">correctional facility psychiatry services</option>
               <option value="detention center mental health provider">detention center mental health provider</option>
-              <option value="jail healthcare vendor behavioral health">jail healthcare vendor behavioral health</option>
-              <option value="prison psychiatric services contract">prison psychiatric services contract</option>
+              <option value="jail healthcare behavioral health vendor">jail healthcare behavioral health vendor</option>
+              <option value="department of corrections mental health services">department of corrections mental health services</option>
               <option value="custom">Custom query...</option>
             </select>
           </div>
@@ -1720,76 +1720,54 @@
           </div>
           <div class="form-group" style="flex:0 0 auto;">
             <label class="form-label" style="visibility:hidden;">x</label>
-            <button class="btn btn-primary" onclick="gsrcOpen('corr-sourcing')">
-              <span style="font-size:14px;">🔍</span> Search Google
+            <button class="btn btn-primary" id="corr-sourcing-run-btn" onclick="csrcRun('corr-sourcing','correctional facilities and jails')">
+              ✦ Search
             </button>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Google-powered search — NPI Registry does not reliably categorize correctional facilities. Use the queries below to find jails, prisons, and detention centers seeking behavioral health partnerships, then log targets directly to your pipeline.</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Uses Claude AI to search the web for correctional facilities, jails, and detention centers in your corridor that may need behavioral health services. Results are pulled live from official sites, directories, and state DOC pages.</div>
       </div>
     </div>
 
-    <!-- Search Tips -->
-    <div class="card mb-20">
-      <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <span class="card-title" style="font-size:12px;">💡 Search Tips & Suggested Queries</span>
-        <span class="text-xs text-muted">click to expand</span>
+    <!-- Results -->
+    <div id="corr-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="corr-sourcing-result-count"></div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..."
+            id="corr-sourcing-filter" oninput="csrcFilter('corr-sourcing')"
+            style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
       </div>
-      <div class="card-body" style="display:none;">
-        <div style="font-size:12px;line-height:1.9;color:var(--text);"><strong>Best query patterns:</strong><br>
-• "[City/County] county jail behavioral health" — finds local jail BH contracts<br>
-• "[State] department of corrections mental health vendor" — finds state prison BH programs<br>
-• "correctional healthcare RFP behavioral health [state]" — finds active bid opportunities<br>
-• "[Company] correctional behavioral health" — research existing vendors (Wellpath, Centurion, NaphCare)<br><br>
-<strong>Key sources:</strong><br>
-• State DOC websites (look for vendor/contractor pages)<br>
-• County Sheriff websites (medical/healthcare services)<br>
-• SAM.gov — federal procurement for BOP facilities<br>
-• Your state's eProcurement portal for active RFPs</div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Organization</th><th>Description</th>
+                <th>City</th><th>State</th><th>Phone</th><th>Website</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="corr-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="corr-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="corr-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🔒</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and run a search</p>
+        <p>Uses Claude AI web search to find correctional center targets in your selected corridor. Results include name, address, phone, website, and a brief description — all pulled live from the web.</p>
       </div>
     </div>
 
-    <!-- Log to Pipeline Panel -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title" style="font-size:12px;">📋 Log a Target to Pipeline</span>
-        <span class="text-xs text-muted">Manually capture targets found via search</span>
-      </div>
-      <div class="card-body">
-        <div class="form-grid form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Organization Name *</label>
-            <input class="form-control" id="corr-sourcing-log-name" placeholder="e.g. Hamilton County Jail">
-          </div>
-          <div class="form-group">
-            <label class="form-label">City</label>
-            <input class="form-control" id="corr-sourcing-log-city" placeholder="Chattanooga">
-          </div>
-          <div class="form-group">
-            <label class="form-label">State</label>
-            <input class="form-control" id="corr-sourcing-log-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input class="form-control" id="corr-sourcing-log-phone" placeholder="(000) 000-0000">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Website</label>
-            <input class="form-control" id="corr-sourcing-log-website" placeholder="www.example.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Key Contact</label>
-            <input class="form-control" id="corr-sourcing-log-contact" placeholder="Name / Title">
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Notes</label>
-            <textarea class="form-control" id="corr-sourcing-log-notes" rows="2" placeholder="Source, context, opportunity details..."></textarea>
-          </div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;">
-          <button class="btn btn-success" onclick="gsrcLogToPipeline('corr-sourcing')">+ Add to Pipeline</button>
-          <button class="btn btn-outline btn-sm" onclick="gsrcClearLog('corr-sourcing')">Clear</button>
-        </div>
+    <div id="corr-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="corr-sourcing-loading-msg">Claude is searching the web...</div>
+        <div style="font-size:12px;color:var(--text-light);margin-top:8px;">This may take 10–20 seconds</div>
       </div>
     </div>
   </div>
@@ -1799,13 +1777,13 @@
       <div class="card-header">
         <span class="card-title">🎓 School Sourcing</span>
         <span class="text-xs text-muted" style="display:flex;align-items:center;gap:6px;">
-          <span style="background:#4285F4;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Google</span>
-          Powered Search
+          <span style="background:linear-gradient(135deg,#cc785c,#a85c8a);color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Claude AI</span>
+          Web Search
         </span>
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
+          <div class="form-group" style="flex:1 1 220px;">
             <label class="form-label">Geography / Corridor</label>
             <select class="form-control" id="school-sourcing-corridor">
               <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
@@ -1826,12 +1804,12 @@
           </div>
           <div class="form-group" style="flex:1 1 260px;">
             <label class="form-label">Search Query</label>
-            <select class="form-control" id="school-sourcing-query">
-                            <option value="school district mental health services contract">school district mental health services contract</option>
-              <option value="K-12 behavioral health partnership">K-12 behavioral health partnership</option>
-              <option value="school based mental health provider">school based mental health provider</option>
-              <option value="student mental health services RFP">student mental health services RFP</option>
-              <option value="county schools counseling services vendor">county schools counseling services vendor</option>
+            <select class="form-control" id="school-sourcing-query" onchange="csrcQueryChanged('school-sourcing')">
+              <option value="school district mental health services">school district mental health services</option>
+              <option value="K-12 behavioral health partnership opportunities">K-12 behavioral health partnership opportunities</option>
+              <option value="school based mental health providers">school based mental health providers</option>
+              <option value="county schools counseling services">county schools counseling services</option>
+              <option value="student mental health services program">student mental health services program</option>
               <option value="charter school mental health services">charter school mental health services</option>
               <option value="custom">Custom query...</option>
             </select>
@@ -1844,77 +1822,54 @@
           </div>
           <div class="form-group" style="flex:0 0 auto;">
             <label class="form-label" style="visibility:hidden;">x</label>
-            <button class="btn btn-primary" onclick="gsrcOpen('school-sourcing')">
-              <span style="font-size:14px;">🔍</span> Search Google
+            <button class="btn btn-primary" id="school-sourcing-run-btn" onclick="csrcRun('school-sourcing','school districts and educational institutions')">
+              ✦ Search
             </button>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Google-powered search — NPI Registry returns dialysis and unrelated clinical facilities for school taxonomy codes. Use the queries below to find school districts and educational institutions seeking behavioral health partnerships.</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Uses Claude AI to search the web for school districts and educational institutions in your corridor seeking behavioral health partnerships. Results pulled from district websites, state education directories, and grant program listings.</div>
       </div>
     </div>
 
-    <!-- Search Tips -->
-    <div class="card mb-20">
-      <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <span class="card-title" style="font-size:12px;">💡 Search Tips & Suggested Queries</span>
-        <span class="text-xs text-muted">click to expand</span>
+    <!-- Results -->
+    <div id="school-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="school-sourcing-result-count"></div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..."
+            id="school-sourcing-filter" oninput="csrcFilter('school-sourcing')"
+            style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
       </div>
-      <div class="card-body" style="display:none;">
-        <div style="font-size:12px;line-height:1.9;color:var(--text);"><strong>Best query patterns:</strong><br>
-• "[County/City] schools mental health services" — finds district-level BH programs<br>
-• "[School district name] behavioral health vendor" — targets specific districts<br>
-• "[State] school mental health services grant" — finds funded programs seeking providers<br>
-• "school based health center behavioral health [city]" — finds school health centers<br><br>
-<strong>Key sources:</strong><br>
-• State Dept of Education websites (mental health initiative pages)<br>
-• Individual school district websites (community partnerships section)<br>
-• SAMHSA School Mental Health resource directory<br>
-• Your state's student wellness or SEL initiative pages<br>
-• Local education agency (LEA) annual reports</div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Organization</th><th>Description</th>
+                <th>City</th><th>State</th><th>Phone</th><th>Website</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="school-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="school-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="school-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🎓</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and run a search</p>
+        <p>Uses Claude AI web search to find school targets in your selected corridor. Results include name, address, phone, website, and a brief description — all pulled live from the web.</p>
       </div>
     </div>
 
-    <!-- Log to Pipeline Panel -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title" style="font-size:12px;">📋 Log a Target to Pipeline</span>
-        <span class="text-xs text-muted">Manually capture targets found via search</span>
-      </div>
-      <div class="card-body">
-        <div class="form-grid form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Organization Name *</label>
-            <input class="form-control" id="school-sourcing-log-name" placeholder="e.g. Hamilton County Jail">
-          </div>
-          <div class="form-group">
-            <label class="form-label">City</label>
-            <input class="form-control" id="school-sourcing-log-city" placeholder="Chattanooga">
-          </div>
-          <div class="form-group">
-            <label class="form-label">State</label>
-            <input class="form-control" id="school-sourcing-log-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input class="form-control" id="school-sourcing-log-phone" placeholder="(000) 000-0000">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Website</label>
-            <input class="form-control" id="school-sourcing-log-website" placeholder="www.example.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Key Contact</label>
-            <input class="form-control" id="school-sourcing-log-contact" placeholder="Name / Title">
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Notes</label>
-            <textarea class="form-control" id="school-sourcing-log-notes" rows="2" placeholder="Source, context, opportunity details..."></textarea>
-          </div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;">
-          <button class="btn btn-success" onclick="gsrcLogToPipeline('school-sourcing')">+ Add to Pipeline</button>
-          <button class="btn btn-outline btn-sm" onclick="gsrcClearLog('school-sourcing')">Clear</button>
-        </div>
+    <div id="school-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="school-sourcing-loading-msg">Claude is searching the web...</div>
+        <div style="font-size:12px;color:var(--text-light);margin-top:8px;">This may take 10–20 seconds</div>
       </div>
     </div>
   </div>
@@ -1924,13 +1879,13 @@
       <div class="card-header">
         <span class="card-title">🏢 Employer Sourcing</span>
         <span class="text-xs text-muted" style="display:flex;align-items:center;gap:6px;">
-          <span style="background:#4285F4;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Google</span>
-          Powered Search
+          <span style="background:linear-gradient(135deg,#cc785c,#a85c8a);color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Claude AI</span>
+          Web Search
         </span>
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
+          <div class="form-group" style="flex:1 1 220px;">
             <label class="form-label">Geography / Corridor</label>
             <select class="form-control" id="emp-sourcing-corridor">
               <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
@@ -1951,13 +1906,13 @@
           </div>
           <div class="form-group" style="flex:1 1 260px;">
             <label class="form-label">Search Query</label>
-            <select class="form-control" id="emp-sourcing-query">
-                            <option value="large employer EAP behavioral health services">large employer EAP behavioral health services</option>
-              <option value="employee assistance program provider">employee assistance program provider</option>
-              <option value="corporate mental health partnership">corporate mental health partnership</option>
-              <option value="employer sponsored behavioral health benefits">employer sponsored behavioral health benefits</option>
-              <option value="workforce mental health services contract">workforce mental health services contract</option>
-              <option value="self-insured employer behavioral health carve-out">self-insured employer behavioral health carve-out</option>
+            <select class="form-control" id="emp-sourcing-query" onchange="csrcQueryChanged('emp-sourcing')">
+              <option value="largest employers">largest employers</option>
+              <option value="major companies headquarters">major companies headquarters</option>
+              <option value="large manufacturing employers">large manufacturing employers</option>
+              <option value="hospital health system employer">hospital health system employer</option>
+              <option value="self-insured employer benefits">self-insured employer benefits</option>
+              <option value="Fortune 500 companies office">Fortune 500 companies office</option>
               <option value="custom">Custom query...</option>
             </select>
           </div>
@@ -1969,79 +1924,54 @@
           </div>
           <div class="form-group" style="flex:0 0 auto;">
             <label class="form-label" style="visibility:hidden;">x</label>
-            <button class="btn btn-primary" onclick="gsrcOpen('emp-sourcing')">
-              <span style="font-size:14px;">🔍</span> Search Google
+            <button class="btn btn-primary" id="emp-sourcing-run-btn" onclick="csrcRun('emp-sourcing','large employers and companies')">
+              ✦ Search
             </button>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Google-powered search — Employers are not meaningfully represented in NPI Registry (pharmacy results dominate). Use the queries below to find large employers, HR leaders, and EAP opportunities, then log targets to your pipeline.</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Uses Claude AI to search the web for large employers in your corridor that may need employee behavioral health programs, EAP services, or workforce mental health partnerships. Results pulled from Chamber directories, business journals, and company sites.</div>
       </div>
     </div>
 
-    <!-- Search Tips -->
-    <div class="card mb-20">
-      <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <span class="card-title" style="font-size:12px;">💡 Search Tips & Suggested Queries</span>
-        <span class="text-xs text-muted">click to expand</span>
+    <!-- Results -->
+    <div id="emp-sourcing-results-area" style="display:none;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="font-size:14px;font-weight:700;" id="emp-sourcing-result-count"></div>
+        <div style="margin-left:auto;">
+          <input type="text" class="form-control" placeholder="Filter results..."
+            id="emp-sourcing-filter" oninput="csrcFilter('emp-sourcing')"
+            style="width:200px;padding:5px 10px;font-size:12px;">
+        </div>
       </div>
-      <div class="card-body" style="display:none;">
-        <div style="font-size:12px;line-height:1.9;color:var(--text);"><strong>Best query patterns:</strong><br>
-• "[City] largest employers" — find top targets by employee count<br>
-• "[Company name] EAP provider" — research existing EAP relationships<br>
-• "[City] Chamber of Commerce members" — broad employer directory<br>
-• "self-insured employer behavioral health [state]" — high-value targets<br>
-• "[Industry] employee mental health program [city]" — industry-specific<br><br>
-<strong>Key sources:</strong><br>
-• Local Chamber of Commerce member directories<br>
-• Business Journal "Book of Lists" (largest employers by metro)<br>
-• LinkedIn company search by location + employee count<br>
-• SHRM local chapter member directories<br>
-• State economic development agency employer databases<br>
-• Fortune 500 / Inc 5000 filtered by geography</div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Organization</th><th>Description</th>
+                <th>City</th><th>State</th><th>Phone</th><th>Website</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="emp-sourcing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="emp-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
+    </div>
+
+    <div id="emp-sourcing-empty-state">
+      <div class="empty-state" style="padding:60px 20px;">
+        <div class="empty-state-icon">🏢</div>
+        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and run a search</p>
+        <p>Uses Claude AI web search to find employer targets in your selected corridor. Results include name, address, phone, website, and a brief description — all pulled live from the web.</p>
       </div>
     </div>
 
-    <!-- Log to Pipeline Panel -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title" style="font-size:12px;">📋 Log a Target to Pipeline</span>
-        <span class="text-xs text-muted">Manually capture targets found via search</span>
-      </div>
-      <div class="card-body">
-        <div class="form-grid form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Organization Name *</label>
-            <input class="form-control" id="emp-sourcing-log-name" placeholder="e.g. Hamilton County Jail">
-          </div>
-          <div class="form-group">
-            <label class="form-label">City</label>
-            <input class="form-control" id="emp-sourcing-log-city" placeholder="Chattanooga">
-          </div>
-          <div class="form-group">
-            <label class="form-label">State</label>
-            <input class="form-control" id="emp-sourcing-log-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input class="form-control" id="emp-sourcing-log-phone" placeholder="(000) 000-0000">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Website</label>
-            <input class="form-control" id="emp-sourcing-log-website" placeholder="www.example.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Key Contact</label>
-            <input class="form-control" id="emp-sourcing-log-contact" placeholder="Name / Title">
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Notes</label>
-            <textarea class="form-control" id="emp-sourcing-log-notes" rows="2" placeholder="Source, context, opportunity details..."></textarea>
-          </div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;">
-          <button class="btn btn-success" onclick="gsrcLogToPipeline('emp-sourcing')">+ Add to Pipeline</button>
-          <button class="btn btn-outline btn-sm" onclick="gsrcClearLog('emp-sourcing')">Clear</button>
-        </div>
+    <div id="emp-sourcing-loading-state" style="display:none;">
+      <div style="text-align:center;padding:60px 20px;">
+        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="emp-sourcing-loading-msg">Claude is searching the web...</div>
+        <div style="font-size:12px;color:var(--text-light);margin-top:8px;">This may take 10–20 seconds</div>
       </div>
     </div>
   </div>
@@ -3953,22 +3883,35 @@ showPage = function(name) {
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
-//  GOOGLE SOURCING — Correctional, Schools, Employers
+//  CLAUDE AI SOURCING — Correctional, Schools, Employers
 // ══════════════════════════════════════════════════════════════════════════════
 
-const GSRC_OPP_TYPE = {
-  'corr-sourcing':   'Other',
-  'school-sourcing': 'Other',
-  'emp-sourcing':    'Other',
-};
+// Per-page raw results store
+const csrcResults = {};
 
-function gsrcOpen(pageId) {
+function csrcQueryChanged(pageId) {
+  const sel = document.getElementById(`${pageId}-query`);
+  const wrap = document.getElementById(`${pageId}-custom-query-wrap`);
+  if (wrap) wrap.style.display = sel.value === 'custom' ? 'block' : 'none';
+}
+
+// Handle corridor custom toggle
+document.addEventListener('change', function(e) {
+  const id = e.target.id;
+  const csrcPages = ['corr-sourcing','school-sourcing','emp-sourcing'];
+  if (id.endsWith('-corridor') && csrcPages.some(p => id.startsWith(p))) {
+    const pageId = id.replace('-corridor','');
+    const wrap = document.getElementById(`${pageId}-custom-wrap`);
+    if (wrap) wrap.style.display = e.target.value === 'custom' ? 'block' : 'none';
+  }
+});
+
+async function csrcRun(pageId, categoryLabel) {
   const corridorSel = document.getElementById(`${pageId}-corridor`);
-  const corridorVal = corridorSel.value;
-  let location = corridorVal === 'custom'
+  let location = corridorSel.value === 'custom'
     ? (document.getElementById(`${pageId}-custom-loc`)?.value || '').trim()
-    : corridorVal;
-  if (!location) { toast('Select a corridor or enter a custom location', 'error'); return; }
+    : corridorSel.value;
+  if (!location) { toast('Select a corridor or enter a location', 'error'); return; }
 
   const querySel = document.getElementById(`${pageId}-query`);
   let query = querySel.value === 'custom'
@@ -3976,59 +3919,111 @@ function gsrcOpen(pageId) {
     : querySel.value;
   if (!query) { toast('Select or enter a search query', 'error'); return; }
 
-  const fullQuery = `${query} ${location}`;
-  const url = `https://www.google.com/search?q=${encodeURIComponent(fullQuery)}`;
-  window.open(url, '_blank');
+  const btn = document.getElementById(`${pageId}-run-btn`);
+  btn.disabled = true; btn.textContent = 'Searching...';
+  document.getElementById(`${pageId}-empty-state`).style.display = 'none';
+  document.getElementById(`${pageId}-results-area`).style.display = 'none';
+  document.getElementById(`${pageId}-loading-state`).style.display = 'block';
+
+  try {
+    const resp = await fetch('/api/web-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, location, category: categoryLabel })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error || `Server error ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    csrcResults[pageId] = data.results || [];
+
+    document.getElementById(`${pageId}-loading-state`).style.display = 'none';
+    document.getElementById(`${pageId}-results-area`).style.display = 'block';
+    csrcRender(pageId, categoryLabel);
+
+  } catch (e) {
+    document.getElementById(`${pageId}-loading-state`).style.display = 'none';
+    document.getElementById(`${pageId}-empty-state`).style.display = 'block';
+    toast('Search failed: ' + e.message, 'error');
+  }
+
+  btn.disabled = false; btn.textContent = '✦ Search';
 }
 
-// Handle corridor and query custom toggles
-document.addEventListener('change', function(e) {
-  const id = e.target.id;
-  // Corridor custom toggle for Google pages
-  if (id.endsWith('-corridor') && ['corr-sourcing','school-sourcing','emp-sourcing'].some(p => id.startsWith(p))) {
-    const pageId = id.replace('-corridor','');
-    const wrap = document.getElementById(`${pageId}-custom-wrap`);
-    if (wrap) wrap.style.display = e.target.value === 'custom' ? 'block' : 'none';
+function csrcFilter(pageId) {
+  const catLabel = {
+    'corr-sourcing':   'correctional facilities and jails',
+    'school-sourcing': 'school districts and educational institutions',
+    'emp-sourcing':    'large employers and companies',
+  };
+  csrcRender(pageId, catLabel[pageId] || '');
+}
+
+function csrcRender(pageId, categoryLabel) {
+  const q = (document.getElementById(`${pageId}-filter`)?.value || '').toLowerCase();
+  let data = csrcResults[pageId] || [];
+  if (q) data = data.filter(r =>
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.city||'').toLowerCase().includes(q) ||
+    (r.description||'').toLowerCase().includes(q)
+  );
+
+  document.getElementById(`${pageId}-result-count`).textContent = `${data.length} results found`;
+
+  const tbody = document.getElementById(`${pageId}-tbody`);
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:24px;">No results found. Try a different query or corridor.</td></tr>';
+    document.getElementById(`${pageId}-footer`).textContent = '';
+    return;
   }
-  // Query custom toggle for Google pages
-  if (id.endsWith('-query') && ['corr-sourcing','school-sourcing','emp-sourcing'].some(p => id.startsWith(p))) {
-    const pageId = id.replace('-query','');
-    const wrap = document.getElementById(`${pageId}-custom-query-wrap`);
-    if (wrap) wrap.style.display = e.target.value === 'custom' ? 'block' : 'none';
-  }
-});
 
-function gsrcLogToPipeline(pageId) {
-  const name = document.getElementById(`${pageId}-log-name`).value.trim();
-  if (!name) { toast('Organization name is required', 'error'); return; }
-  const city     = document.getElementById(`${pageId}-log-city`).value.trim();
-  const state    = document.getElementById(`${pageId}-log-state`).value.trim().toUpperCase();
-  const phone    = document.getElementById(`${pageId}-log-phone`).value.trim();
-  const website  = document.getElementById(`${pageId}-log-website`).value.trim();
-  const contact  = document.getElementById(`${pageId}-log-contact`).value.trim();
-  const notes    = document.getElementById(`${pageId}-log-notes`).value.trim();
+  tbody.innerHTML = data.map((r, i) => `
+    <tr onclick="csrcAddToOpp('${pageId}',${i})" style="cursor:pointer;">
+      <td class="text-xs text-muted">${i+1}</td>
+      <td style="font-weight:600;max-width:180px;">${r.name||'—'}</td>
+      <td style="font-size:11px;color:var(--text-light);max-width:220px;">${r.description||'—'}</td>
+      <td>${r.city||'—'}</td>
+      <td>${r.state||'—'}</td>
+      <td class="text-xs">${r.phone||'—'}</td>
+      <td class="text-xs">${r.website ? `<a href="${r.website.startsWith('http')?r.website:'https://'+r.website}" target="_blank" style="color:var(--blue);" onclick="event.stopPropagation()">↗ Visit</a>` : '—'}</td>
+      <td><button class="btn btn-success btn-xs" onclick="event.stopPropagation();csrcAddToOpp('${pageId}',${i})">+ Pipeline</button></td>
+    </tr>`).join('');
 
-  const noteParts = [];
-  if (phone)   noteParts.push(`Phone: ${phone}`);
-  if (website) noteParts.push(`Website: ${website}`);
-  if (contact) noteParts.push(`Key Contact: ${contact}`);
-  if (notes)   noteParts.push(notes);
+  const total = (csrcResults[pageId] || []).length;
+  document.getElementById(`${pageId}-footer`).textContent =
+    `${data.length} of ${total} results · Sourced via Claude AI web search · Click any row or "+ Pipeline" to add to opportunities`;
+}
 
-  document.getElementById('new-name').value  = name;
-  document.getElementById('new-type').value  = GSRC_OPP_TYPE[pageId] || 'Other';
-  document.getElementById('new-state').value = state;
-  document.getElementById('new-city').value  = city;
+function csrcAddToOpp(pageId, idx) {
+  const q = (document.getElementById(`${pageId}-filter`)?.value || '').toLowerCase();
+  let data = csrcResults[pageId] || [];
+  if (q) data = data.filter(r =>
+    (r.name||'').toLowerCase().includes(q) ||
+    (r.city||'').toLowerCase().includes(q) ||
+    (r.description||'').toLowerCase().includes(q)
+  );
+  const r = data[idx];
+  if (!r) return;
+
+  document.getElementById('new-name').value  = (r.name||'').substring(0,80);
+  document.getElementById('new-type').value  = 'Other';
+  document.getElementById('new-state').value = r.state||'';
+  document.getElementById('new-city').value  = r.city||'';
   document.getElementById('new-source').value = 'Outbound';
   document.getElementById('new-stage').value  = 'Identified';
-  document.getElementById('new-notes').value  = noteParts.join('\n');
-  openModal('new-opp-modal');
-}
 
-function gsrcClearLog(pageId) {
-  ['log-name','log-city','log-state','log-phone','log-website','log-contact','log-notes'].forEach(f => {
-    const el = document.getElementById(`${pageId}-${f}`);
-    if (el) el.value = '';
-  });
+  const noteParts = [];
+  if (r.description) noteParts.push(r.description);
+  if (r.phone)    noteParts.push(`Phone: ${r.phone}`);
+  if (r.website)  noteParts.push(`Website: ${r.website}`);
+  if (r.address)  noteParts.push(`Address: ${r.address}`);
+  if (r.source)   noteParts.push(`Source: ${r.source}`);
+  document.getElementById('new-notes').value = noteParts.join('\n');
+
+  openModal('new-opp-modal');
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -4067,3 +4062,480 @@ init();
 </script>
 </body>
 </html>
+
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+const https = require('https');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// ─── PERSISTENT STORAGE ───────────────────────────────────────────────────────
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+const DB_PATH = path.join(DATA_DIR, 'db.json');
+
+function readDB() {
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+    }
+  } catch (e) {
+    console.error('DB read error:', e.message);
+  }
+  return getDefaultDB();
+}
+
+function writeDB(db) {
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
+  } catch (e) {
+    console.error('DB write error:', e.message);
+  }
+}
+
+function nextId(collection) {
+  if (!collection.length) return 1;
+  return Math.max(...collection.map(r => r.id || 0)) + 1;
+}
+
+function now() {
+  return new Date().toISOString();
+}
+
+function getDefaultDB() {
+  const db = {
+    team_members: [],
+    opportunities: [],
+    pipeline_stages: [],
+    scorecard_entries: [],
+    activity_log: [],
+    hospitals: [],
+    rhc_facilities: []
+  };
+
+  const team = [
+    { id: 1, name: 'Dr. Chili', title: 'Chief Medical Officer', email: '', phone: '', role: 'BD', territory: 'Multi-State', notes: '', active: true, created_at: now() },
+    { id: 2, name: 'Chad', title: 'VP Business Development', email: '', phone: '', role: 'BD', territory: 'Multi-State', notes: '', active: true, created_at: now() },
+    { id: 3, name: 'Eric Worthan', title: 'COO', email: '', phone: '', role: 'Leadership', territory: 'All', notes: '', active: true, created_at: now() },
+    { id: 4, name: 'Charlie Tyson', title: 'CFO', email: '', phone: '', role: 'Leadership', territory: 'All', notes: '', active: true, created_at: now() },
+  ];
+  db.team_members = team;
+
+  const STAGES = ['Identified', 'Contacted/Awareness', 'Meeting', 'Data Exchange', 'Pro Forma/Proposal', 'Close'];
+  const stageOrder = { 'Identified': 0, 'Contacted/Awareness': 1, 'Meeting': 2, 'Data Exchange': 3, 'Pro Forma/Proposal': 4, 'Close': 5 };
+
+  const oppData = [
+    { name: 'Coosa Valley', type: 'Hospital', source: 'Current Book Expansion', stage: 'Pro Forma/Proposal', state: 'AL', city: 'Sylacauga', notes: 'CVMC looking to cutout Horizon as BH Mngt Co. Chad in active dialogue with COO and CFO.', status: '3/27 Contract in hand, RHC contract in hand, pro forma complete', score: 48, score_pct: 0.80 },
+    { name: 'CGH Medical Center (Illinois)', type: 'Hospital/Horizon', source: 'Referral', stage: 'Pro Forma/Proposal', state: 'IL', city: 'Chicago', notes: 'Chad sent proforma to Charlie for review', status: null, score: 0, score_pct: 0 },
+    { name: 'Brookwood Baptist - Intake', type: 'Hospital - Mgmt/SLA', source: 'Referral', stage: 'Meeting', state: 'AL', city: 'Birmingham', notes: 'Chad/Chili to meet to finalize proposal', status: null, score: 0, score_pct: 0 },
+    { name: 'McCalla', type: 'Sub - PHP', source: 'Referral', stage: 'Meeting', state: 'AL', city: 'McCalla', notes: 'Chad will share pricing with Mike at McCalla', status: null, score: 0, score_pct: 0 },
+    { name: 'WellStar', type: 'Health System', source: 'Outbound', stage: 'Identified', state: 'GA', city: 'Atlanta', notes: null, status: null, score: 0, score_pct: 0 },
+    { name: 'Pickens County', type: 'Rural Hospital', source: 'Outbound', stage: 'Identified', state: 'AL', city: 'Pickens County', notes: 'Chad will reach out to Chaim to review opportunity', status: null, score: 0, score_pct: 0 },
+    { name: 'Haleyville', type: 'Rural Hospital', source: 'Outbound', stage: 'Identified', state: 'AL', city: 'Haleyville', notes: null, status: null, score: 0, score_pct: 0 },
+    { name: 'Russellville', type: 'Rural Hospital', source: 'Outbound', stage: 'Identified', state: 'AL', city: 'Russellville', notes: null, status: null, score: 0, score_pct: 0 },
+    { name: 'Crenshaw Community Hospital', type: 'Hospital - SLA', source: 'Referral', stage: 'Meeting', state: 'AL', city: 'Luverne', notes: 'Chad will connect with Mitch on next steps with Judge Purdue', status: null, score: 0, score_pct: 0 },
+    { name: 'Geriatric Unit - Gallatin TN', type: 'Hospital', source: 'Outbound', stage: 'Identified', state: 'TN', city: 'Gallatin', notes: 'Gather more data on facility, Dr Chili to reach out', status: null, score: 0, score_pct: 0 },
+    { name: 'Covenant Health Knoxville', type: 'Hospital', source: 'Outbound', stage: 'Identified', state: 'TN', city: 'Knoxville', notes: 'Find contact to work through, Dr. Chili to reach out', status: null, score: 0, score_pct: 0 },
+    { name: 'Saginaw Michigan', type: 'Hospital/Horizon', source: 'Referral', stage: 'Pro Forma/Proposal', state: 'MI', city: 'Saginaw', notes: 'Proposal for full service only', status: null, score: 0, score_pct: 0 },
+    { name: 'Evolve MD', type: 'Practice', source: 'Referral', stage: 'Identified', state: null, city: null, notes: 'Chad connected with Paul, he wants a finders fee', status: null, score: 0, score_pct: 0 },
+  ];
+
+  let oppId = 1;
+  let stageId = 1;
+  for (const o of oppData) {
+    const opp = { id: oppId, ...o, assigned_to: null, npi: null, address: null, phone: null, top_line_revenue: null, ebitda_dollars: null, ebitda_pct: null, facility_type: null, active: true, created_at: now(), updated_at: now() };
+    db.opportunities.push(opp);
+    const currentIdx = stageOrder[o.stage] ?? 0;
+    for (let i = 0; i < STAGES.length; i++) {
+      db.pipeline_stages.push({ id: stageId++, opportunity_id: oppId, stage: STAGES[i], completed: i <= currentIdx, completed_at: i <= currentIdx ? now() : null, notes: null });
+    }
+    oppId++;
+  }
+
+  return db;
+}
+
+let DB = readDB();
+
+// ─── MIDDLEWARE ────────────────────────────────────────────────────────────────
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ─── NPI PROXY ─────────────────────────────────────────────────────────────────
+// Proxies requests to the CMS NPI Registry to avoid browser CORS issues
+app.get('/api/npi-proxy', async (req, res) => {
+  const targetUrl = req.query.url;
+  if (!targetUrl || !targetUrl.startsWith('https://npiregistry.cms.hhs.gov/')) {
+    return res.status(400).json({ error: 'Invalid URL' });
+  }
+  try {
+    const data = await new Promise((resolve, reject) => {
+      https.get(targetUrl, (response) => {
+        let body = '';
+        response.on('data', chunk => body += chunk);
+        response.on('end', () => {
+          try { resolve(JSON.parse(body)); }
+          catch (e) { reject(new Error('Invalid JSON from NPI registry')); }
+        });
+      }).on('error', reject);
+    });
+    res.json(data);
+  } catch (e) {
+    console.error('NPI proxy error:', e.message);
+    res.status(502).json({ error: 'NPI registry lookup failed', detail: e.message });
+  }
+});
+
+// ─── BD NOTE GENERATOR (AI-powered via Anthropic) ─────────────────────────────
+app.post('/api/bd-note', async (req, res) => {
+  const { provider } = req.body;
+  if (!provider) return res.status(400).json({ error: 'No provider data' });
+
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_API_KEY) {
+    return res.json({ note: 'BD Note generation requires ANTHROPIC_API_KEY environment variable to be set in Render.' });
+  }
+
+  const prompt = `You are a healthcare business development analyst for Ally Psychiatry, a multi-state outpatient behavioral health organization that acquires retiring solo and small-group psychiatric practices.
+
+Analyze this provider as a potential acquisition/transition target:
+- Name: ${provider.providerName}${provider.credential ? ', ' + provider.credential : ''}
+- Practice/Org: ${provider.orgName || 'Solo listing (no group)'}
+- Specialty: ${provider.specialty}
+- Location: ${provider.city}, ${provider.state}
+- NPI Enrollment Year: ${provider.enrollYear || 'Unknown'}
+- Direct Phone: ${provider.phone || 'None on record'}
+- Sourcing Score: ${provider.score}/100 (Tier ${provider.tier})
+- Scoring factors: ${provider.scoringNotes.join('; ')}
+
+Write a 2–3 sentence BD analyst note covering: (1) why this is or isn't a strong acquisition target, (2) one key risk or next validation step, (3) recommended first outreach approach. Be direct and specific. No filler phrases.`;
+
+  try {
+    const postData = JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    const note = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+      const req = https.request(options, (resp) => {
+        let body = '';
+        resp.on('data', chunk => body += chunk);
+        resp.on('end', () => {
+          try {
+            const data = JSON.parse(body);
+            const text = data.content && data.content[0] && data.content[0].text;
+            resolve(text || 'Analysis unavailable.');
+          } catch (e) { reject(e); }
+        });
+      });
+      req.on('error', reject);
+      req.write(postData);
+      req.end();
+    });
+
+    res.json({ note });
+  } catch (e) {
+    console.error('BD note error:', e.message);
+    res.json({ note: 'Note generation failed. Verify ANTHROPIC_API_KEY is set in Render environment variables.' });
+  }
+});
+
+
+// ─── CLAUDE WEB SEARCH ─────────────────────────────────────────────────────────
+// Calls Anthropic API with web_search tool to find facility targets
+app.post('/api/web-search', async (req, res) => {
+  const { query, location, category } = req.body;
+  if (!query || !location) return res.status(400).json({ error: 'query and location required' });
+
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in environment variables.' });
+  }
+
+  const prompt = `You are a healthcare business development researcher for Ally Psychiatry, a multi-state behavioral health organization. Search the web and find a list of ${category} targets in ${location}.
+
+Search query to use: "${query} ${location}"
+
+Return ONLY a JSON array (no markdown, no explanation, just the raw JSON array) of up to 20 results. Each object must have these exact fields:
+- "name": organization name (string)
+- "address": street address if found, otherwise ""
+- "city": city (string)
+- "state": 2-letter state abbreviation (string)  
+- "phone": phone number if found, otherwise ""
+- "website": website URL if found, otherwise ""
+- "description": 1-sentence description of what this organization does (string)
+- "source": where you found this info (e.g. "official website", "Google listing", "state directory")
+
+Only include real, verifiable organizations. Do not fabricate entries. If you find fewer than 20 real results, return what you find.`;
+
+  try {
+    const postData = JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4000,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    const result = await new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'web-search-2025-03-05',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
+
+      const apiReq = https.request(options, (apiRes) => {
+        let body = '';
+        apiRes.on('data', chunk => body += chunk);
+        apiRes.on('end', () => {
+          try { resolve(JSON.parse(body)); }
+          catch (e) { reject(new Error('Invalid JSON from Anthropic')); }
+        });
+      });
+      apiReq.on('error', reject);
+      apiReq.write(postData);
+      apiReq.end();
+    });
+
+    // Extract text from response — may go through tool use cycles
+    // Find the final text block in content
+    const content = result.content || [];
+    let jsonText = '';
+    for (const block of content) {
+      if (block.type === 'text' && block.text) {
+        jsonText = block.text;
+      }
+    }
+
+    // Strip any markdown code fences if present
+    jsonText = jsonText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
+    // Parse the JSON array
+    let results = [];
+    try {
+      // Find the JSON array — sometimes Claude adds a preamble
+      const arrStart = jsonText.indexOf('[');
+      const arrEnd = jsonText.lastIndexOf(']');
+      if (arrStart > -1 && arrEnd > arrStart) {
+        results = JSON.parse(jsonText.slice(arrStart, arrEnd + 1));
+      }
+    } catch (e) {
+      console.error('JSON parse error:', e.message, '\nRaw:', jsonText.slice(0, 500));
+      return res.status(500).json({ error: 'Failed to parse search results', raw: jsonText.slice(0, 500) });
+    }
+
+    res.json({ results, query: `${query} ${location}`, count: results.length });
+
+  } catch (e) {
+    console.error('Web search error:', e.message);
+    res.status(502).json({ error: 'Search failed: ' + e.message });
+  }
+});
+
+// ─── TEAM ──────────────────────────────────────────────────────────────────────
+app.get('/api/team', (req, res) => {
+  res.json(DB.team_members.filter(t => t.active).sort((a, b) => a.name.localeCompare(b.name)));
+});
+
+app.post('/api/team', (req, res) => {
+  const member = { id: nextId(DB.team_members), ...req.body, active: true, created_at: now(), updated_at: now() };
+  DB.team_members.push(member);
+  writeDB(DB);
+  res.json(member);
+});
+
+app.put('/api/team/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const idx = DB.team_members.findIndex(t => t.id === id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  DB.team_members[idx] = { ...DB.team_members[idx], ...req.body, id, updated_at: now() };
+  writeDB(DB);
+  res.json({ success: true });
+});
+
+app.delete('/api/team/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const idx = DB.team_members.findIndex(t => t.id === id);
+  if (idx !== -1) { DB.team_members[idx].active = false; writeDB(DB); }
+  res.json({ success: true });
+});
+
+// ─── OPPORTUNITIES ─────────────────────────────────────────────────────────────
+app.get('/api/opportunities', (req, res) => {
+  const opps = DB.opportunities.filter(o => o.active).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  const result = opps.map(o => {
+    const team = DB.team_members.find(t => t.id === o.assigned_to);
+    return { ...o, assigned_name: team ? team.name : null };
+  });
+  res.json(result);
+});
+
+app.get('/api/opportunities/:id', (req, res) => {
+  const opp = DB.opportunities.find(o => o.id === parseInt(req.params.id));
+  if (!opp) return res.status(404).json({ error: 'Not found' });
+  const team = DB.team_members.find(t => t.id === opp.assigned_to);
+  res.json({
+    ...opp,
+    assigned_name: team ? team.name : null,
+    stages: DB.pipeline_stages.filter(s => s.opportunity_id === opp.id).sort((a, b) => a.id - b.id),
+    scorecard: DB.scorecard_entries.filter(s => s.opportunity_id === opp.id),
+    activity: DB.activity_log.filter(a => a.opportunity_id === opp.id)
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 20)
+      .map(a => ({ ...a, member_name: (DB.team_members.find(t => t.id === a.team_member_id) || {}).name || null }))
+  });
+});
+
+app.post('/api/opportunities', (req, res) => {
+  const STAGES = ['Identified', 'Contacted/Awareness', 'Meeting', 'Data Exchange', 'Pro Forma/Proposal', 'Close'];
+  const stageOrder = { 'Identified': 0, 'Contacted/Awareness': 1, 'Meeting': 2, 'Data Exchange': 3, 'Pro Forma/Proposal': 4, 'Close': 5 };
+  const opp = { id: nextId(DB.opportunities), score: 0, score_pct: 0, active: true, created_at: now(), updated_at: now(), ...req.body };
+  DB.opportunities.push(opp);
+  const currentIdx = stageOrder[opp.stage] ?? 0;
+  let sid = nextId(DB.pipeline_stages);
+  STAGES.forEach((s, i) => {
+    DB.pipeline_stages.push({ id: sid++, opportunity_id: opp.id, stage: s, completed: i <= currentIdx, completed_at: i <= currentIdx ? now() : null });
+  });
+  writeDB(DB);
+  res.json(opp);
+});
+
+app.put('/api/opportunities/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const idx = DB.opportunities.findIndex(o => o.id === id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  DB.opportunities[idx] = { ...DB.opportunities[idx], ...req.body, id, updated_at: now() };
+  writeDB(DB);
+  res.json({ success: true });
+});
+
+app.delete('/api/opportunities/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const idx = DB.opportunities.findIndex(o => o.id === id);
+  if (idx !== -1) { DB.opportunities[idx].active = false; writeDB(DB); }
+  res.json({ success: true });
+});
+
+app.put('/api/opportunities/:id/stages', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { stages } = req.body;
+  const STAGE_ORDER = ['Identified', 'Contacted/Awareness', 'Meeting', 'Data Exchange', 'Pro Forma/Proposal', 'Close'];
+  DB.pipeline_stages = DB.pipeline_stages.map(s => {
+    if (s.opportunity_id !== id || !stages.hasOwnProperty(s.stage)) return s;
+    return { ...s, completed: !!stages[s.stage], completed_at: stages[s.stage] ? now() : null };
+  });
+  let currentStage = 'Identified';
+  for (const s of STAGE_ORDER) { if (stages[s]) currentStage = s; }
+  const idx = DB.opportunities.findIndex(o => o.id === id);
+  if (idx !== -1) { DB.opportunities[idx].stage = currentStage; DB.opportunities[idx].updated_at = now(); }
+  writeDB(DB);
+  res.json({ success: true });
+});
+
+app.post('/api/opportunities/:id/scorecard', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { entries } = req.body;
+  DB.scorecard_entries = DB.scorecard_entries.filter(s => s.opportunity_id !== id);
+  let totalScore = 0;
+  let eid = nextId(DB.scorecard_entries);
+  for (const e of entries) {
+    const score = (e.tier || 0) * e.weight;
+    totalScore += score;
+    DB.scorecard_entries.push({ id: eid++, opportunity_id: id, category: e.category, tier: e.tier, weight: e.weight, score });
+  }
+  const score_pct = totalScore / 60;
+  const idx = DB.opportunities.findIndex(o => o.id === id);
+  if (idx !== -1) { DB.opportunities[idx].score = totalScore; DB.opportunities[idx].score_pct = score_pct; DB.opportunities[idx].updated_at = now(); }
+  writeDB(DB);
+  res.json({ score: totalScore, score_pct });
+});
+
+// ─── ACTIVITY ──────────────────────────────────────────────────────────────────
+app.post('/api/activity', (req, res) => {
+  const entry = { id: nextId(DB.activity_log), ...req.body, created_at: now() };
+  DB.activity_log.push(entry);
+  writeDB(DB);
+  res.json(entry);
+});
+
+// ─── STATS ─────────────────────────────────────────────────────────────────────
+app.get('/api/stats', (req, res) => {
+  const activeOpps = DB.opportunities.filter(o => o.active);
+  const byStage = {};
+  for (const o of activeOpps) { byStage[o.stage] = (byStage[o.stage] || 0) + 1; }
+  const byStageArr = Object.entries(byStage).map(([stage, c]) => ({ stage, c }));
+  const scored = activeOpps.filter(o => o.score > 0);
+  const avgScore = scored.length ? scored.reduce((a, b) => a + (b.score_pct || 0), 0) / scored.length : null;
+  const recentActivity = [...DB.activity_log].reverse().slice(0, 10).map(a => ({
+    ...a,
+    opp_name: (DB.opportunities.find(o => o.id === a.opportunity_id) || {}).name || null,
+    member_name: (DB.team_members.find(t => t.id === a.team_member_id) || {}).name || null
+  }));
+  res.json({ totalOpps: activeOpps.length, byStage: byStageArr, avgScore, recentActivity });
+});
+
+// ─── HOSPITALS / RHC ───────────────────────────────────────────────────────────
+app.get('/api/hospitals', (req, res) => {
+  const { q = '', state = '', limit = 50, offset = 0 } = req.query;
+  let results = DB.hospitals;
+  if (q) results = results.filter(h => (h.facility_name || '').toLowerCase().includes(q.toLowerCase()) || (h.city || '').toLowerCase().includes(q.toLowerCase()));
+  if (state) results = results.filter(h => h.state === state);
+  res.json({ total: results.length, results: results.slice(parseInt(offset), parseInt(offset) + parseInt(limit)) });
+});
+
+app.get('/api/rhc', (req, res) => {
+  const { q = '', state = '', limit = 50, offset = 0 } = req.query;
+  let results = DB.rhc_facilities;
+  if (q) results = results.filter(r => (r.organization_name || '').toLowerCase().includes(q.toLowerCase()) || (r.dba_name || '').toLowerCase().includes(q.toLowerCase()) || (r.city || '').toLowerCase().includes(q.toLowerCase()));
+  if (state) results = results.filter(r => r.state === state);
+  res.json({ total: results.length, results: results.slice(parseInt(offset), parseInt(offset) + parseInt(limit)) });
+});
+
+app.post('/api/import/hospitals', (req, res) => {
+  const { records } = req.body;
+  DB.hospitals.push(...records);
+  writeDB(DB);
+  res.json({ imported: records.length, total: DB.hospitals.length });
+});
+
+app.post('/api/import/rhc', (req, res) => {
+  const { records } = req.body;
+  DB.rhc_facilities.push(...records);
+  writeDB(DB);
+  res.json({ imported: records.length, total: DB.rhc_facilities.length });
+});
+
+// ─── SERVE FRONTEND ────────────────────────────────────────────────────────────
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Ally BD App running on port ${PORT}`);
+  console.log(`Database: ${DB_PATH}`);
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn('⚠ ANTHROPIC_API_KEY not set — BD Note generation will be disabled');
+  }
+});
