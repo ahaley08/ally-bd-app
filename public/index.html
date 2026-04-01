@@ -628,6 +628,33 @@
   }
   @keyframes spin { to { transform: rotate(360deg) } }
   
+
+  /* ── COLLAPSIBLE NAV GROUPS ── */
+  .nav-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .nav-group-header:hover .nav-group-arrow { color: rgba(255,255,255,0.8); }
+  .nav-group-arrow {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    transition: transform 0.2s;
+  }
+  .nav-group-arrow.collapsed { transform: rotate(-90deg); }
+  .nav-group {
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+    max-height: 400px;
+  }
+  .nav-group.collapsed { max-height: 0; }
+  .nav-item.nav-sub {
+    padding-left: 28px;
+    font-size: 12px;
+  }
   @media (max-width: 900px) {
     #sidebar { width: 200px; min-width: 200px; }
     #main { margin-left: 200px; }
@@ -657,44 +684,59 @@
   <div class="nav-item" onclick="showPage('scorecard')" id="nav-scorecard">
     <span class="nav-icon">📋</span> Scorecard
   </div>
-  <div class="sidebar-label">Provider Sourcing</div>
-  <div class="nav-item" onclick="showPage('sourcing')" id="nav-sourcing">
-    <span class="nav-icon">🔬</span> Provider Sourcing
+
+  <!-- PROVIDER SOURCING GROUP -->
+  <div class="nav-group-header" onclick="toggleNavGroup('grp-provider')" id="grp-provider-hdr">
+    <span style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.45);text-transform:uppercase;">Provider Sourcing</span>
+    <span class="nav-group-arrow" id="grp-provider-arrow">▾</span>
   </div>
-  <div class="nav-item" onclick="showPage('retiring')" id="nav-retiring">
-    <span class="nav-icon">🎯</span> Retiring Providers
+  <div class="nav-group" id="grp-provider">
+    <div class="nav-item nav-sub" onclick="showPage('sourcing')" id="nav-sourcing">
+      <span class="nav-icon">🔬</span> Provider Sourcing
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('retiring')" id="nav-retiring">
+      <span class="nav-icon">🎯</span> Retiring Providers
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('bh-sourcing')" id="nav-bh-sourcing">
+      <span class="nav-icon">🧠</span> Behavioral Health
+    </div>
   </div>
-  <div class="nav-item" onclick="showPage('bh-sourcing')" id="nav-bh-sourcing">
-    <span class="nav-icon">🧠</span> Behavioral Health
+
+  <!-- FACILITY SOURCING GROUP -->
+  <div class="nav-group-header" onclick="toggleNavGroup('grp-facility')" id="grp-facility-hdr">
+    <span style="font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.45);text-transform:uppercase;">Facility Sourcing</span>
+    <span class="nav-group-arrow" id="grp-facility-arrow">▾</span>
   </div>
-  <div class="sidebar-label">Facility Sourcing</div>
-  <div class="nav-item" onclick="showPage('hosp-sourcing')" id="nav-hosp-sourcing">
-    <span class="nav-icon">🏨</span> Hospitals
+  <div class="nav-group" id="grp-facility">
+    <div class="nav-item nav-sub" onclick="showPage('hosp-sourcing')" id="nav-hosp-sourcing">
+      <span class="nav-icon">🏨</span> Hospitals
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('rhc-sourcing')" id="nav-rhc-sourcing">
+      <span class="nav-icon">🏡</span> RHC / FQHC
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('snf-sourcing')" id="nav-snf-sourcing">
+      <span class="nav-icon">🛏</span> SNF / LTC
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('al-sourcing')" id="nav-al-sourcing">
+      <span class="nav-icon">🏠</span> Assisted Living
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('bhc-sourcing')" id="nav-bhc-sourcing">
+      <span class="nav-icon">🏛</span> Community BHC
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('sud-sourcing')" id="nav-sud-sourcing">
+      <span class="nav-icon">💊</span> Substance Abuse
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('corr-sourcing')" id="nav-corr-sourcing">
+      <span class="nav-icon">🔒</span> Correctional
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('school-sourcing')" id="nav-school-sourcing">
+      <span class="nav-icon">🎓</span> Schools
+    </div>
+    <div class="nav-item nav-sub" onclick="showPage('emp-sourcing')" id="nav-emp-sourcing">
+      <span class="nav-icon">🏢</span> Employers
+    </div>
   </div>
-  <div class="nav-item" onclick="showPage('rhc-sourcing')" id="nav-rhc-sourcing">
-    <span class="nav-icon">🏡</span> RHC / FQHC
-  </div>
-  <div class="nav-item" onclick="showPage('snf-sourcing')" id="nav-snf-sourcing">
-    <span class="nav-icon">🛏</span> SNF / LTC
-  </div>
-  <div class="nav-item" onclick="showPage('al-sourcing')" id="nav-al-sourcing">
-    <span class="nav-icon">🏠</span> Assisted Living
-  </div>
-  <div class="nav-item" onclick="showPage('bhc-sourcing')" id="nav-bhc-sourcing">
-    <span class="nav-icon">🏛</span> Community BHC
-  </div>
-  <div class="nav-item" onclick="showPage('sud-sourcing')" id="nav-sud-sourcing">
-    <span class="nav-icon">💊</span> Substance Abuse
-  </div>
-  <div class="nav-item" onclick="showPage('corr-sourcing')" id="nav-corr-sourcing">
-    <span class="nav-icon">🔒</span> Correctional
-  </div>
-  <div class="nav-item" onclick="showPage('school-sourcing')" id="nav-school-sourcing">
-    <span class="nav-icon">🎓</span> Schools
-  </div>
-  <div class="nav-item" onclick="showPage('emp-sourcing')" id="nav-emp-sourcing">
-    <span class="nav-icon">🏢</span> Employers
-  </div>
+
   <div class="sidebar-label">Admin</div>
   <div class="nav-item" onclick="showPage('team')" id="nav-team">
     <span class="nav-icon">👥</span> Team
@@ -1631,85 +1673,123 @@
   <div class="page" id="page-corr-sourcing">
     <div class="card mb-20">
       <div class="card-header">
-        <span class="card-title">🔒 Correctional Sourcing</span>
-        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+        <span class="card-title">🔒 Correctional Center Sourcing</span>
+        <span class="text-xs text-muted" style="display:flex;align-items:center;gap:6px;">
+          <span style="background:#4285F4;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Google</span>
+          Powered Search
+        </span>
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
           <div class="form-group" style="flex:1 1 240px;">
             <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="corr-sourcing-corridor" onchange="fsSrcCorridorChanged('corr-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+            <select class="form-control" id="corr-sourcing-corridor">
+              <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
+              <option value="Nashville TN">Nashville Corridor (TN)</option>
+              <option value="Knoxville TN">Knoxville Corridor (TN)</option>
+              <option value="Huntsville AL">Huntsville / North AL</option>
+              <option value="Birmingham AL">Birmingham Metro (AL)</option>
+              <option value="Louisville KY">Louisville Corridor (KY)</option>
+              <option value="Charleston SC">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Location</option>
             </select>
           </div>
-          <div id="corr-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
-              <div class="form-group" style="flex:1;">
-                <label class="form-label">City</label>
-                <input class="form-control" id="corr-sourcing-custom-city" placeholder="e.g. Memphis">
-              </div>
-              <div class="form-group" style="flex:0 0 70px;">
-                <label class="form-label">State</label>
-                <input class="form-control" id="corr-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
-              </div>
+          <div id="corr-sourcing-custom-wrap" style="display:none;flex:0 0 180px;">
+            <div class="form-group">
+              <label class="form-label">Custom City, State</label>
+              <input class="form-control" id="corr-sourcing-custom-loc" placeholder="e.g. Memphis TN">
             </div>
           </div>
-          <div class="form-group" style="flex:1 1 220px;">
-            <label class="form-label">Type</label>
-            <select class="form-control" id="corr-sourcing-specialty" onchange="fsSrcRender('corr-sourcing')"></select>
+          <div class="form-group" style="flex:1 1 260px;">
+            <label class="form-label">Search Query</label>
+            <select class="form-control" id="corr-sourcing-query">
+                            <option value="county jail behavioral health services">county jail behavioral health services</option>
+              <option value="state prison mental health contract">state prison mental health contract</option>
+              <option value="correctional facility psychiatry services">correctional facility psychiatry services</option>
+              <option value="detention center mental health provider">detention center mental health provider</option>
+              <option value="jail healthcare vendor behavioral health">jail healthcare vendor behavioral health</option>
+              <option value="prison psychiatric services contract">prison psychiatric services contract</option>
+              <option value="custom">Custom query...</option>
+            </select>
+          </div>
+          <div id="corr-sourcing-custom-query-wrap" style="display:none;flex:1 1 260px;">
+            <div class="form-group">
+              <label class="form-label">Custom Query</label>
+              <input class="form-control" id="corr-sourcing-custom-query" placeholder="Enter search terms...">
+            </div>
           </div>
           <div class="form-group" style="flex:0 0 auto;">
             <label class="form-label" style="visibility:hidden;">x</label>
-            <button class="btn btn-primary" id="corr-sourcing-run-btn" onclick="fsSrcRun('corr-sourcing')">Search</button>
+            <button class="btn btn-primary" onclick="gsrcOpen('corr-sourcing')">
+              <span style="font-size:14px;">🔍</span> Search Google
+            </button>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for correctional healthcare facilities and jail/prison health clinics</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Google-powered search — NPI Registry does not reliably categorize correctional facilities. Use the queries below to find jails, prisons, and detention centers seeking behavioral health partnerships, then log targets directly to your pipeline.</div>
       </div>
     </div>
 
-    <div id="corr-sourcing-results-area" style="display:none;">
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-        <div style="font-size:14px;font-weight:700;" id="corr-sourcing-result-count"></div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-primary btn-xs corr-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('corr-sourcing','all',this)">All</button>
-          <button class="btn btn-outline btn-xs corr-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('corr-sourcing','Primary',this)">Primary Tier</button>
-          <button class="btn btn-outline btn-xs corr-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('corr-sourcing','Secondary',this)">Secondary</button>
-        </div>
-        <div style="margin-left:auto;">
-          <input type="text" class="form-control" placeholder="Filter results..." id="corr-sourcing-filter"
-            oninput="fsSrcRender('corr-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
-        </div>
+    <!-- Search Tips -->
+    <div class="card mb-20">
+      <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <span class="card-title" style="font-size:12px;">💡 Search Tips & Suggested Queries</span>
+        <span class="text-xs text-muted">click to expand</span>
       </div>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
-            <tbody id="corr-sourcing-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div id="corr-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
-    </div>
-
-    <div id="corr-sourcing-empty-state">
-      <div class="empty-state" style="padding:60px 20px;">
-        <div class="empty-state-icon">🔒</div>
-        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
-        <p>Searches the CMS NPI Registry for correctional facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      <div class="card-body" style="display:none;">
+        <div style="font-size:12px;line-height:1.9;color:var(--text);"><strong>Best query patterns:</strong><br>
+• "[City/County] county jail behavioral health" — finds local jail BH contracts<br>
+• "[State] department of corrections mental health vendor" — finds state prison BH programs<br>
+• "correctional healthcare RFP behavioral health [state]" — finds active bid opportunities<br>
+• "[Company] correctional behavioral health" — research existing vendors (Wellpath, Centurion, NaphCare)<br><br>
+<strong>Key sources:</strong><br>
+• State DOC websites (look for vendor/contractor pages)<br>
+• County Sheriff websites (medical/healthcare services)<br>
+• SAM.gov — federal procurement for BOP facilities<br>
+• Your state's eProcurement portal for active RFPs</div>
       </div>
     </div>
 
-    <div id="corr-sourcing-loading-state" style="display:none;">
-      <div style="text-align:center;padding:60px 20px;">
-        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
-        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="corr-sourcing-loading-msg">Searching NPI Registry...</div>
+    <!-- Log to Pipeline Panel -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" style="font-size:12px;">📋 Log a Target to Pipeline</span>
+        <span class="text-xs text-muted">Manually capture targets found via search</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Organization Name *</label>
+            <input class="form-control" id="corr-sourcing-log-name" placeholder="e.g. Hamilton County Jail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input class="form-control" id="corr-sourcing-log-city" placeholder="Chattanooga">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <input class="form-control" id="corr-sourcing-log-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-control" id="corr-sourcing-log-phone" placeholder="(000) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Website</label>
+            <input class="form-control" id="corr-sourcing-log-website" placeholder="www.example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Key Contact</label>
+            <input class="form-control" id="corr-sourcing-log-contact" placeholder="Name / Title">
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" id="corr-sourcing-log-notes" rows="2" placeholder="Source, context, opportunity details..."></textarea>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <button class="btn btn-success" onclick="gsrcLogToPipeline('corr-sourcing')">+ Add to Pipeline</button>
+          <button class="btn btn-outline btn-sm" onclick="gsrcClearLog('corr-sourcing')">Clear</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1718,84 +1798,123 @@
     <div class="card mb-20">
       <div class="card-header">
         <span class="card-title">🎓 School Sourcing</span>
-        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+        <span class="text-xs text-muted" style="display:flex;align-items:center;gap:6px;">
+          <span style="background:#4285F4;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Google</span>
+          Powered Search
+        </span>
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
           <div class="form-group" style="flex:1 1 240px;">
             <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="school-sourcing-corridor" onchange="fsSrcCorridorChanged('school-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+            <select class="form-control" id="school-sourcing-corridor">
+              <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
+              <option value="Nashville TN">Nashville Corridor (TN)</option>
+              <option value="Knoxville TN">Knoxville Corridor (TN)</option>
+              <option value="Huntsville AL">Huntsville / North AL</option>
+              <option value="Birmingham AL">Birmingham Metro (AL)</option>
+              <option value="Louisville KY">Louisville Corridor (KY)</option>
+              <option value="Charleston SC">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Location</option>
             </select>
           </div>
-          <div id="school-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
-              <div class="form-group" style="flex:1;">
-                <label class="form-label">City</label>
-                <input class="form-control" id="school-sourcing-custom-city" placeholder="e.g. Memphis">
-              </div>
-              <div class="form-group" style="flex:0 0 70px;">
-                <label class="form-label">State</label>
-                <input class="form-control" id="school-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
-              </div>
+          <div id="school-sourcing-custom-wrap" style="display:none;flex:0 0 180px;">
+            <div class="form-group">
+              <label class="form-label">Custom City, State</label>
+              <input class="form-control" id="school-sourcing-custom-loc" placeholder="e.g. Memphis TN">
             </div>
           </div>
-          <div class="form-group" style="flex:1 1 220px;">
-            <label class="form-label">Type</label>
-            <select class="form-control" id="school-sourcing-specialty" onchange="fsSrcRender('school-sourcing')"></select>
+          <div class="form-group" style="flex:1 1 260px;">
+            <label class="form-label">Search Query</label>
+            <select class="form-control" id="school-sourcing-query">
+                            <option value="school district mental health services contract">school district mental health services contract</option>
+              <option value="K-12 behavioral health partnership">K-12 behavioral health partnership</option>
+              <option value="school based mental health provider">school based mental health provider</option>
+              <option value="student mental health services RFP">student mental health services RFP</option>
+              <option value="county schools counseling services vendor">county schools counseling services vendor</option>
+              <option value="charter school mental health services">charter school mental health services</option>
+              <option value="custom">Custom query...</option>
+            </select>
+          </div>
+          <div id="school-sourcing-custom-query-wrap" style="display:none;flex:1 1 260px;">
+            <div class="form-group">
+              <label class="form-label">Custom Query</label>
+              <input class="form-control" id="school-sourcing-custom-query" placeholder="Enter search terms...">
+            </div>
           </div>
           <div class="form-group" style="flex:0 0 auto;">
             <label class="form-label" style="visibility:hidden;">x</label>
-            <button class="btn btn-primary" id="school-sourcing-run-btn" onclick="fsSrcRun('school-sourcing')">Search</button>
+            <button class="btn btn-primary" onclick="gsrcOpen('school-sourcing')">
+              <span style="font-size:14px;">🔍</span> Search Google
+            </button>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for school-based health clinics and student health centers</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Google-powered search — NPI Registry returns dialysis and unrelated clinical facilities for school taxonomy codes. Use the queries below to find school districts and educational institutions seeking behavioral health partnerships.</div>
       </div>
     </div>
 
-    <div id="school-sourcing-results-area" style="display:none;">
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-        <div style="font-size:14px;font-weight:700;" id="school-sourcing-result-count"></div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-primary btn-xs school-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('school-sourcing','all',this)">All</button>
-          <button class="btn btn-outline btn-xs school-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('school-sourcing','Primary',this)">Primary Tier</button>
-          <button class="btn btn-outline btn-xs school-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('school-sourcing','Secondary',this)">Secondary</button>
-        </div>
-        <div style="margin-left:auto;">
-          <input type="text" class="form-control" placeholder="Filter results..." id="school-sourcing-filter"
-            oninput="fsSrcRender('school-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
-        </div>
+    <!-- Search Tips -->
+    <div class="card mb-20">
+      <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <span class="card-title" style="font-size:12px;">💡 Search Tips & Suggested Queries</span>
+        <span class="text-xs text-muted">click to expand</span>
       </div>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
-            <tbody id="school-sourcing-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div id="school-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
-    </div>
-
-    <div id="school-sourcing-empty-state">
-      <div class="empty-state" style="padding:60px 20px;">
-        <div class="empty-state-icon">🎓</div>
-        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
-        <p>Searches the CMS NPI Registry for school facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      <div class="card-body" style="display:none;">
+        <div style="font-size:12px;line-height:1.9;color:var(--text);"><strong>Best query patterns:</strong><br>
+• "[County/City] schools mental health services" — finds district-level BH programs<br>
+• "[School district name] behavioral health vendor" — targets specific districts<br>
+• "[State] school mental health services grant" — finds funded programs seeking providers<br>
+• "school based health center behavioral health [city]" — finds school health centers<br><br>
+<strong>Key sources:</strong><br>
+• State Dept of Education websites (mental health initiative pages)<br>
+• Individual school district websites (community partnerships section)<br>
+• SAMHSA School Mental Health resource directory<br>
+• Your state's student wellness or SEL initiative pages<br>
+• Local education agency (LEA) annual reports</div>
       </div>
     </div>
 
-    <div id="school-sourcing-loading-state" style="display:none;">
-      <div style="text-align:center;padding:60px 20px;">
-        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
-        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="school-sourcing-loading-msg">Searching NPI Registry...</div>
+    <!-- Log to Pipeline Panel -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" style="font-size:12px;">📋 Log a Target to Pipeline</span>
+        <span class="text-xs text-muted">Manually capture targets found via search</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Organization Name *</label>
+            <input class="form-control" id="school-sourcing-log-name" placeholder="e.g. Hamilton County Jail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input class="form-control" id="school-sourcing-log-city" placeholder="Chattanooga">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <input class="form-control" id="school-sourcing-log-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-control" id="school-sourcing-log-phone" placeholder="(000) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Website</label>
+            <input class="form-control" id="school-sourcing-log-website" placeholder="www.example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Key Contact</label>
+            <input class="form-control" id="school-sourcing-log-contact" placeholder="Name / Title">
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" id="school-sourcing-log-notes" rows="2" placeholder="Source, context, opportunity details..."></textarea>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <button class="btn btn-success" onclick="gsrcLogToPipeline('school-sourcing')">+ Add to Pipeline</button>
+          <button class="btn btn-outline btn-sm" onclick="gsrcClearLog('school-sourcing')">Clear</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1804,84 +1923,125 @@
     <div class="card mb-20">
       <div class="card-header">
         <span class="card-title">🏢 Employer Sourcing</span>
-        <span class="text-xs text-muted">Live NPI Registry Search · NPI-2 Organizations</span>
+        <span class="text-xs text-muted" style="display:flex;align-items:center;gap:6px;">
+          <span style="background:#4285F4;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;">Google</span>
+          Powered Search
+        </span>
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
           <div class="form-group" style="flex:1 1 240px;">
             <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="emp-sourcing-corridor" onchange="fsSrcCorridorChanged('emp-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+            <select class="form-control" id="emp-sourcing-corridor">
+              <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
+              <option value="Nashville TN">Nashville Corridor (TN)</option>
+              <option value="Knoxville TN">Knoxville Corridor (TN)</option>
+              <option value="Huntsville AL">Huntsville / North AL</option>
+              <option value="Birmingham AL">Birmingham Metro (AL)</option>
+              <option value="Louisville KY">Louisville Corridor (KY)</option>
+              <option value="Charleston SC">Charleston / Lowcountry (SC)</option>
+              <option value="custom">Custom Location</option>
             </select>
           </div>
-          <div id="emp-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
-              <div class="form-group" style="flex:1;">
-                <label class="form-label">City</label>
-                <input class="form-control" id="emp-sourcing-custom-city" placeholder="e.g. Memphis">
-              </div>
-              <div class="form-group" style="flex:0 0 70px;">
-                <label class="form-label">State</label>
-                <input class="form-control" id="emp-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
-              </div>
+          <div id="emp-sourcing-custom-wrap" style="display:none;flex:0 0 180px;">
+            <div class="form-group">
+              <label class="form-label">Custom City, State</label>
+              <input class="form-control" id="emp-sourcing-custom-loc" placeholder="e.g. Memphis TN">
             </div>
           </div>
-          <div class="form-group" style="flex:1 1 220px;">
-            <label class="form-label">Type</label>
-            <select class="form-control" id="emp-sourcing-specialty" onchange="fsSrcRender('emp-sourcing')"></select>
+          <div class="form-group" style="flex:1 1 260px;">
+            <label class="form-label">Search Query</label>
+            <select class="form-control" id="emp-sourcing-query">
+                            <option value="large employer EAP behavioral health services">large employer EAP behavioral health services</option>
+              <option value="employee assistance program provider">employee assistance program provider</option>
+              <option value="corporate mental health partnership">corporate mental health partnership</option>
+              <option value="employer sponsored behavioral health benefits">employer sponsored behavioral health benefits</option>
+              <option value="workforce mental health services contract">workforce mental health services contract</option>
+              <option value="self-insured employer behavioral health carve-out">self-insured employer behavioral health carve-out</option>
+              <option value="custom">Custom query...</option>
+            </select>
+          </div>
+          <div id="emp-sourcing-custom-query-wrap" style="display:none;flex:1 1 260px;">
+            <div class="form-group">
+              <label class="form-label">Custom Query</label>
+              <input class="form-control" id="emp-sourcing-custom-query" placeholder="Enter search terms...">
+            </div>
           </div>
           <div class="form-group" style="flex:0 0 auto;">
             <label class="form-label" style="visibility:hidden;">x</label>
-            <button class="btn btn-primary" id="emp-sourcing-run-btn" onclick="fsSrcRun('emp-sourcing')">Search</button>
+            <button class="btn btn-primary" onclick="gsrcOpen('emp-sourcing')">
+              <span style="font-size:14px;">🔍</span> Search Google
+            </button>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Searches CMS NPPES for occupational health clinics and employer-based health organizations · Note: most employers are not in NPI — supplement with LinkedIn, local Chamber of Commerce, and SHRM directories</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light);">Google-powered search — Employers are not meaningfully represented in NPI Registry (pharmacy results dominate). Use the queries below to find large employers, HR leaders, and EAP opportunities, then log targets to your pipeline.</div>
       </div>
     </div>
 
-    <div id="emp-sourcing-results-area" style="display:none;">
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-        <div style="font-size:14px;font-weight:700;" id="emp-sourcing-result-count"></div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-primary btn-xs emp-sourcing-tf" data-tier="all" onclick="fsSrcTierFilter('emp-sourcing','all',this)">All</button>
-          <button class="btn btn-outline btn-xs emp-sourcing-tf" data-tier="Primary" onclick="fsSrcTierFilter('emp-sourcing','Primary',this)">Primary Tier</button>
-          <button class="btn btn-outline btn-xs emp-sourcing-tf" data-tier="Secondary" onclick="fsSrcTierFilter('emp-sourcing','Secondary',this)">Secondary</button>
-        </div>
-        <div style="margin-left:auto;">
-          <input type="text" class="form-control" placeholder="Filter results..." id="emp-sourcing-filter"
-            oninput="fsSrcRender('emp-sourcing')" style="width:200px;padding:5px 10px;font-size:12px;">
-        </div>
+    <!-- Search Tips -->
+    <div class="card mb-20">
+      <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <span class="card-title" style="font-size:12px;">💡 Search Tips & Suggested Queries</span>
+        <span class="text-xs text-muted">click to expand</span>
       </div>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Organization</th><th>City</th><th>State</th><th>Phone</th><th>NPI</th><th>Taxonomy</th><th>Action</th></tr></thead>
-            <tbody id="emp-sourcing-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div id="emp-sourcing-footer" style="text-align:center;font-size:11px;color:var(--text-light);margin-top:12px;"></div>
-    </div>
-
-    <div id="emp-sourcing-empty-state">
-      <div class="empty-state" style="padding:60px 20px;">
-        <div class="empty-state-icon">🏢</div>
-        <p style="font-size:14px;font-weight:600;margin-bottom:6px;">Select a corridor and search</p>
-        <p>Searches the CMS NPI Registry for employer facilities and organizations. Results include name, address, phone, and NPI number.</p>
+      <div class="card-body" style="display:none;">
+        <div style="font-size:12px;line-height:1.9;color:var(--text);"><strong>Best query patterns:</strong><br>
+• "[City] largest employers" — find top targets by employee count<br>
+• "[Company name] EAP provider" — research existing EAP relationships<br>
+• "[City] Chamber of Commerce members" — broad employer directory<br>
+• "self-insured employer behavioral health [state]" — high-value targets<br>
+• "[Industry] employee mental health program [city]" — industry-specific<br><br>
+<strong>Key sources:</strong><br>
+• Local Chamber of Commerce member directories<br>
+• Business Journal "Book of Lists" (largest employers by metro)<br>
+• LinkedIn company search by location + employee count<br>
+• SHRM local chapter member directories<br>
+• State economic development agency employer databases<br>
+• Fortune 500 / Inc 5000 filtered by geography</div>
       </div>
     </div>
 
-    <div id="emp-sourcing-loading-state" style="display:none;">
-      <div style="text-align:center;padding:60px 20px;">
-        <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
-        <div style="font-size:14px;font-weight:600;color:var(--blue);" id="emp-sourcing-loading-msg">Searching NPI Registry...</div>
+    <!-- Log to Pipeline Panel -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" style="font-size:12px;">📋 Log a Target to Pipeline</span>
+        <span class="text-xs text-muted">Manually capture targets found via search</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Organization Name *</label>
+            <input class="form-control" id="emp-sourcing-log-name" placeholder="e.g. Hamilton County Jail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input class="form-control" id="emp-sourcing-log-city" placeholder="Chattanooga">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <input class="form-control" id="emp-sourcing-log-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-control" id="emp-sourcing-log-phone" placeholder="(000) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Website</label>
+            <input class="form-control" id="emp-sourcing-log-website" placeholder="www.example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Key Contact</label>
+            <input class="form-control" id="emp-sourcing-log-contact" placeholder="Name / Title">
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" id="emp-sourcing-log-notes" rows="2" placeholder="Source, context, opportunity details..."></textarea>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <button class="btn btn-success" onclick="gsrcLogToPipeline('emp-sourcing')">+ Add to Pipeline</button>
+          <button class="btn btn-outline btn-sm" onclick="gsrcClearLog('emp-sourcing')">Clear</button>
+        </div>
       </div>
     </div>
   </div>
@@ -3778,17 +3938,129 @@ function fsSrcAddToOpp(pageId, idx) {
   openModal('new-opp-modal');
 }
 
-// Hook showPage to init specialty dropdowns on first visit
+// Hook showPage to init specialty dropdowns and expand nav groups
 const _origShowPage = showPage;
 showPage = function(name) {
   _origShowPage(name);
-  // Init facility sourcing pages
-  const fsPageIds = ['hosp-sourcing','rhc-sourcing','snf-sourcing','al-sourcing',
-    'bhc-sourcing','sud-sourcing','corr-sourcing','school-sourcing','emp-sourcing','bh-sourcing'];
-  if (fsPageIds.includes(name)) {
+  // Init NPI facility sourcing pages (not Google-search pages)
+  const npiPageIds = ['hosp-sourcing','rhc-sourcing','snf-sourcing','al-sourcing',
+    'bhc-sourcing','sud-sourcing','bh-sourcing'];
+  if (npiPageIds.includes(name)) {
     fsSrcInitPage(name);
   }
+  // Expand the correct nav group
+  expandGroupForPage(name);
 };
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  GOOGLE SOURCING — Correctional, Schools, Employers
+// ══════════════════════════════════════════════════════════════════════════════
+
+const GSRC_OPP_TYPE = {
+  'corr-sourcing':   'Other',
+  'school-sourcing': 'Other',
+  'emp-sourcing':    'Other',
+};
+
+function gsrcOpen(pageId) {
+  const corridorSel = document.getElementById(`${pageId}-corridor`);
+  const corridorVal = corridorSel.value;
+  let location = corridorVal === 'custom'
+    ? (document.getElementById(`${pageId}-custom-loc`)?.value || '').trim()
+    : corridorVal;
+  if (!location) { toast('Select a corridor or enter a custom location', 'error'); return; }
+
+  const querySel = document.getElementById(`${pageId}-query`);
+  let query = querySel.value === 'custom'
+    ? (document.getElementById(`${pageId}-custom-query`)?.value || '').trim()
+    : querySel.value;
+  if (!query) { toast('Select or enter a search query', 'error'); return; }
+
+  const fullQuery = `${query} ${location}`;
+  const url = `https://www.google.com/search?q=${encodeURIComponent(fullQuery)}`;
+  window.open(url, '_blank');
+}
+
+// Handle corridor and query custom toggles
+document.addEventListener('change', function(e) {
+  const id = e.target.id;
+  // Corridor custom toggle for Google pages
+  if (id.endsWith('-corridor') && ['corr-sourcing','school-sourcing','emp-sourcing'].some(p => id.startsWith(p))) {
+    const pageId = id.replace('-corridor','');
+    const wrap = document.getElementById(`${pageId}-custom-wrap`);
+    if (wrap) wrap.style.display = e.target.value === 'custom' ? 'block' : 'none';
+  }
+  // Query custom toggle for Google pages
+  if (id.endsWith('-query') && ['corr-sourcing','school-sourcing','emp-sourcing'].some(p => id.startsWith(p))) {
+    const pageId = id.replace('-query','');
+    const wrap = document.getElementById(`${pageId}-custom-query-wrap`);
+    if (wrap) wrap.style.display = e.target.value === 'custom' ? 'block' : 'none';
+  }
+});
+
+function gsrcLogToPipeline(pageId) {
+  const name = document.getElementById(`${pageId}-log-name`).value.trim();
+  if (!name) { toast('Organization name is required', 'error'); return; }
+  const city     = document.getElementById(`${pageId}-log-city`).value.trim();
+  const state    = document.getElementById(`${pageId}-log-state`).value.trim().toUpperCase();
+  const phone    = document.getElementById(`${pageId}-log-phone`).value.trim();
+  const website  = document.getElementById(`${pageId}-log-website`).value.trim();
+  const contact  = document.getElementById(`${pageId}-log-contact`).value.trim();
+  const notes    = document.getElementById(`${pageId}-log-notes`).value.trim();
+
+  const noteParts = [];
+  if (phone)   noteParts.push(`Phone: ${phone}`);
+  if (website) noteParts.push(`Website: ${website}`);
+  if (contact) noteParts.push(`Key Contact: ${contact}`);
+  if (notes)   noteParts.push(notes);
+
+  document.getElementById('new-name').value  = name;
+  document.getElementById('new-type').value  = GSRC_OPP_TYPE[pageId] || 'Other';
+  document.getElementById('new-state').value = state;
+  document.getElementById('new-city').value  = city;
+  document.getElementById('new-source').value = 'Outbound';
+  document.getElementById('new-stage').value  = 'Identified';
+  document.getElementById('new-notes').value  = noteParts.join('\n');
+  openModal('new-opp-modal');
+}
+
+function gsrcClearLog(pageId) {
+  ['log-name','log-city','log-state','log-phone','log-website','log-contact','log-notes'].forEach(f => {
+    const el = document.getElementById(`${pageId}-${f}`);
+    if (el) el.value = '';
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  COLLAPSIBLE NAV GROUPS
+// ══════════════════════════════════════════════════════════════════════════════
+
+function toggleNavGroup(groupId) {
+  const grp   = document.getElementById(groupId);
+  const arrow = document.getElementById(`${groupId}-arrow`);
+  if (!grp) return;
+  const collapsed = grp.classList.toggle('collapsed');
+  if (arrow) arrow.classList.toggle('collapsed', collapsed);
+}
+
+// Auto-expand the group containing the active page
+function expandGroupForPage(pageName) {
+  const providerPages = ['sourcing','retiring','bh-sourcing'];
+  const facilityPages = ['hosp-sourcing','rhc-sourcing','snf-sourcing','al-sourcing',
+    'bhc-sourcing','sud-sourcing','corr-sourcing','school-sourcing','emp-sourcing'];
+  if (providerPages.includes(pageName)) {
+    const grp = document.getElementById('grp-provider');
+    const arrow = document.getElementById('grp-provider-arrow');
+    if (grp) grp.classList.remove('collapsed');
+    if (arrow) arrow.classList.remove('collapsed');
+  }
+  if (facilityPages.includes(pageName)) {
+    const grp = document.getElementById('grp-facility');
+    const arrow = document.getElementById('grp-facility-arrow');
+    if (grp) grp.classList.remove('collapsed');
+    if (arrow) arrow.classList.remove('collapsed');
+  }
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 init();
