@@ -5,14 +5,3 @@
   "scripts": { "start": "node server.js" },
   "dependencies": { "express": "^4.18.2", "cors": "^2.8.5" }
 }
-```
-6. Click **Commit changes**
-
-**Step 2 — Check your repo structure:**
-Go back to the repo root and tell me exactly what files and folders you see listed. It should look like this:
-```
-public/
-  index.html
-server.js
-package.json
-render.yaml
