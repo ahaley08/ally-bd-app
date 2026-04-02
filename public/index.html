@@ -3014,57 +3014,66 @@ const NPI_SPECIALTIES = {
   pcp: {
     label: 'Primary Care',
     options: [
-      { label:'All Primary Care',      codes:['207Q00000X','207R00000X','208D00000X','207RG0100X','207QG0300X','208000000X'] },
-      { label:'Family Medicine',        codes:['207Q00000X'] },
-      { label:'Internal Medicine',      codes:['207R00000X'] },
-      { label:'General Practice',       codes:['208D00000X'] },
-      { label:'Geriatric Medicine',     codes:['207RG0100X','207QG0300X'] },
-      { label:'Pediatrics',             codes:['208000000X','2080P0205X'] },
+      { label:'All Primary Care',      codes:['207Q00000X','207R00000X','208D00000X','207RG0100X','207QG0300X','208000000X'], desc:'' },
+      { label:'Family Medicine',        codes:['207Q00000X'],                           desc:'Family Medicine' },
+      { label:'Internal Medicine',      codes:['207R00000X'],                           desc:'Internal Medicine' },
+      { label:'General Practice',       codes:['208D00000X'],                           desc:'General Practice' },
+      { label:'Geriatric Medicine',     codes:['207RG0100X','207QG0300X'],             desc:'Geriatric' },
+      { label:'Pediatrics',             codes:['208000000X','2080P0205X'],             desc:'Pediatrics' },
     ]
   },
   bh: {
     label: 'Behavioral Health',
     options: [
-      { label:'All Behavioral Health',  codes:['2084P0800X','363LP0808X','103TC0700X','1041C0700X','101Y00000X','106H00000X'] },
-      { label:'Psychiatry (MD/DO)',      codes:['2084P0800X'] },
-      { label:'PMHNP',                   codes:['363LP0808X'] },
-      { label:'Psychologist',            codes:['103TC0700X'] },
-      { label:'Clinical Social Work',    codes:['1041C0700X'] },
-      { label:'Counselor / Therapist',   codes:['101Y00000X'] },
-      { label:'Addiction Medicine',      codes:['2084A2900X','207RA0401X'] },
+      { label:'All Behavioral Health',  codes:['2084P0800X','363LP0808X','103TC0700X','1041C0700X','101Y00000X','106H00000X'], desc:'' },
+      { label:'Psychiatry (MD/DO)',      codes:['2084P0800X'],                          desc:'Psychiatry' },
+      { label:'PMHNP',                   codes:['363LP0808X'],                          desc:'Psychiatric' },
+      { label:'Psychologist',            codes:['103TC0700X'],                          desc:'Psychologist' },
+      { label:'Clinical Social Work',    codes:['1041C0700X'],                          desc:'Clinical Social Worker' },
+      { label:'Counselor / Therapist',   codes:['101Y00000X'],                          desc:'Counselor' },
+      { label:'Addiction Medicine',      codes:['2084A2900X','207RA0401X'],            desc:'Addiction' },
     ]
   },
   specialty: {
     label: 'Specialty Providers',
     options: [
-      { label:'All Specialties',         codes:['207RC0000X','207N00000X','207Y00000X','207RE0101X','207RG0300X','208600000X','207RN0300X','2084N0400X','207T00000X','207V00000X','207RX0202X','207W00000X','207X00000X','208000000X','207RP1001X','207RR0500X','208800000X'] },
-      { label:'Cardiology',              codes:['207RC0000X','207RI0011X'] },
-      { label:'Cardiology / Vascular',   codes:['207RC0000X','207RV0001X'] },
-      { label:'Dermatology',             codes:['207N00000X'] },
-      { label:'ENT / Otolaryngology',    codes:['207Y00000X'] },
-      { label:'Endocrinology',           codes:['207RE0101X'] },
-      { label:'Gastroenterology',        codes:['207RG0300X'] },
-      { label:'General Surgery',         codes:['208600000X'] },
-      { label:'Infectious Disease',      codes:['207RI0200X'] },
-      { label:'Nephrology',              codes:['207RN0300X'] },
-      { label:'Neurology',               codes:['2084N0400X','2084N0600X'] },
-      { label:'Neurosurgery',            codes:['207T00000X'] },
-      { label:'OB/GYN',                  codes:['207V00000X'] },
-      { label:'Oncology',                codes:['207RX0202X','2085R0202X'] },
-      { label:'Ophthalmology',           codes:['207W00000X'] },
-      { label:'Orthopedics',             codes:['207X00000X'] },
-      { label:'Pediatric Specialties',   codes:['208000000X','2080P0205X'] },
-      { label:'Pulmonology',             codes:['207RP1001X'] },
-      { label:'Rheumatology',            codes:['207RR0500X'] },
-      { label:'Urology',                 codes:['208800000X'] },
+      { label:'All Specialties',         codes:['207RC0000X','207N00000X','207Y00000X','207RE0101X','207RG0300X','208600000X','207RN0300X','2084N0400X','207T00000X','207V00000X','207RX0202X','207W00000X','207X00000X','208000000X','207RP1001X','207RR0500X','208800000X'], desc:'' },
+      { label:'Cardiology',              codes:['207RC0000X','207RI0011X'],            desc:'Cardiology' },
+      { label:'Cardiology / Vascular',   codes:['207RC0000X','207RV0001X'],            desc:'Cardiology' },
+      { label:'Dermatology',             codes:['207N00000X'],                          desc:'Dermatology' },
+      { label:'ENT / Otolaryngology',    codes:['207Y00000X'],                          desc:'Otolaryngology' },
+      { label:'Endocrinology',           codes:['207RE0101X'],                          desc:'Endocrinology' },
+      { label:'Gastroenterology',        codes:['207RG0300X'],                          desc:'Gastroenterology' },
+      { label:'General Surgery',         codes:['208600000X'],                          desc:'Surgery' },
+      { label:'Infectious Disease',      codes:['207RI0200X'],                          desc:'Infectious Disease' },
+      { label:'Nephrology',              codes:['207RN0300X'],                          desc:'Nephrology' },
+      { label:'Neurology',               codes:['2084N0400X','2084N0600X'],            desc:'Neurology' },
+      { label:'Neurosurgery',            codes:['207T00000X'],                          desc:'Neurological' },
+      { label:'OB/GYN',                  codes:['207V00000X'],                          desc:'Obstetrics' },
+      { label:'Oncology',                codes:['207RX0202X','2085R0202X'],            desc:'Oncology' },
+      { label:'Ophthalmology',           codes:['207W00000X'],                          desc:'Ophthalmology' },
+      { label:'Orthopedics',             codes:['207X00000X'],                          desc:'Orthopedic' },
+      { label:'Pediatric Specialties',   codes:['208000000X','2080P0205X'],            desc:'Pediatric' },
+      { label:'Pulmonology',             codes:['207RP1001X'],                          desc:'Pulmonary' },
+      { label:'Rheumatology',            codes:['207RR0500X'],                          desc:'Rheumatology' },
+      { label:'Urology',                 codes:['208800000X'],                          desc:'Urology' },
     ]
   }
 };
 
-async function npiSearchCity(city, state) {
-  const url = `https://npiregistry.cms.hhs.gov/api/?version=2.1&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&enumeration_type=NPI-1&limit=200`;
-  const resp = await fetch(`/api/npi-proxy?url=${encodeURIComponent(url)}`);
-  if (!resp.ok) throw new Error('NPI lookup failed');
+async function npiSearchCity(city, state, taxonomyDesc, taxonomyCodes, enumType) {
+  // Use the paginated server endpoint for complete results
+  const resp = await fetch('/api/npi-search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      city, state,
+      enumType: enumType || 'NPI-1',
+      taxonomyDesc: taxonomyDesc || '',
+      taxonomyCodes: taxonomyCodes || []
+    })
+  });
+  if (!resp.ok) throw new Error('NPI search failed');
   const data = await resp.json();
   return data.results || [];
 }
@@ -3091,7 +3100,7 @@ function npiParseProvider(r) {
   };
 }
 
-async function npiRunCorridorSearch(corridorKey, customCity, customState, taxonomyCodes, loadingMsgEl) {
+async function npiRunCorridorSearch(corridorKey, customCity, customState, taxonomyCodes, loadingMsgEl, taxonomyDesc) {
   let cities, state;
   if (corridorKey === 'custom') {
     cities = [customCity]; state = customState;
@@ -3102,12 +3111,12 @@ async function npiRunCorridorSearch(corridorKey, customCity, customState, taxono
   const allRaw = [];
   for (let i = 0; i < cities.length; i++) {
     if (loadingMsgEl) loadingMsgEl.textContent = `Searching ${cities[i]}, ${state}... (${i+1}/${cities.length})`;
-    const raw = await npiSearchCity(cities[i], state);
-    const filtered = raw.filter(r => (r.taxonomies||[]).some(t => taxonomyCodes.includes(t.code)));
-    allRaw.push(...filtered);
-    if (i < cities.length - 1) await new Promise(res => setTimeout(res, 400));
+    // Pass taxonomy desc for server-side pre-filtering + codes for client precision
+    const raw = await npiSearchCity(cities[i], state, taxonomyDesc || '', taxonomyCodes, 'NPI-1');
+    allRaw.push(...raw);
+    if (i < cities.length - 1) await new Promise(res => setTimeout(res, 500));
   }
-  // Deduplicate
+  // Deduplicate by NPI number
   const seen = new Set();
   return allRaw.filter(r => { if (seen.has(r.number)) return false; seen.add(r.number); return true; });
 }
@@ -3128,7 +3137,7 @@ function psUpdateSpecialties() {
   const cat = document.getElementById('ps-category').value;
   const sel = document.getElementById('ps-specialty');
   const opts = NPI_SPECIALTIES[cat].options;
-  sel.innerHTML = opts.map(o => `<option value="${o.codes.join(',')}">${o.label}</option>`).join('');
+  sel.innerHTML = opts.map(o => `<option value="${o.codes.join(',')}" data-desc="${o.desc||''}">${o.label}</option>`).join('');
 }
 
 function psSetAffFilter(val, el) {
@@ -3142,7 +3151,10 @@ async function psRunSearch() {
   const corridorKey = document.getElementById('ps-corridor').value;
   const customCity  = document.getElementById('ps-custom-city')?.value.trim() || '';
   const customState = document.getElementById('ps-custom-state')?.value.trim().toUpperCase() || '';
-  const codes = document.getElementById('ps-specialty').value.split(',');
+  const specialtySel = document.getElementById('ps-specialty');
+  const codes = specialtySel.value.split(',');
+  const selectedOpt = specialtySel.options[specialtySel.selectedIndex];
+  const taxDesc = selectedOpt ? (selectedOpt.dataset.desc || '') : '';
   const btn = document.getElementById('ps-run-btn');
 
   if (corridorKey === 'custom' && (!customCity || !customState)) {
@@ -3157,7 +3169,7 @@ async function psRunSearch() {
   try {
     const raw = await npiRunCorridorSearch(
       corridorKey, customCity, customState, codes,
-      document.getElementById('ps-loading-msg')
+      document.getElementById('ps-loading-msg'), taxDesc
     );
     psResults = raw.map(npiParseProvider).filter(p => !p.deactivated);
     psAffFilter = 'all';
@@ -3282,7 +3294,7 @@ function retUpdateSpecialties() {
   const cat = document.getElementById('ret-category').value;
   const sel = document.getElementById('ret-specialty');
   const opts = NPI_SPECIALTIES[cat].options;
-  sel.innerHTML = opts.map(o => `<option value="${o.codes.join(',')}">${o.label}</option>`).join('');
+  sel.innerHTML = opts.map(o => `<option value="${o.codes.join(',')}" data-desc="${o.desc||''}">${o.label}</option>`).join('');
 }
 
 function retScoreProvider(p) {
@@ -3342,7 +3354,10 @@ async function retRunSearch() {
   const corridorKey = document.getElementById('ret-corridor').value;
   const customCity  = document.getElementById('ret-custom-city')?.value.trim() || '';
   const customState = document.getElementById('ret-custom-state')?.value.trim().toUpperCase() || '';
-  const codes = document.getElementById('ret-specialty').value.split(',');
+  const retSpecSel = document.getElementById('ret-specialty');
+  const codes = retSpecSel.value.split(',');
+  const retSelOpt = retSpecSel.options[retSpecSel.selectedIndex];
+  const retTaxDesc = retSelOpt ? (retSelOpt.dataset.desc || '') : '';
   const btn = document.getElementById('ret-run-btn');
 
   if (corridorKey === 'custom' && (!customCity || !customState)) {
@@ -3357,7 +3372,7 @@ async function retRunSearch() {
   try {
     const raw = await npiRunCorridorSearch(
       corridorKey, customCity, customState, codes,
-      document.getElementById('ret-loading-msg')
+      document.getElementById('ret-loading-msg'), retTaxDesc
     );
     retResults = raw.map(r => {
       const p = npiParseProvider(r);
@@ -3711,15 +3726,20 @@ async function fsSrcRun(pageId) {
       document.getElementById(`${pageId}-loading-msg`).textContent =
         `Searching ${cities[i]}, ${state}... (${i+1}/${cities.length})`;
       // Build NPI API URL — Type 2 searches by organization_name city/state
-      const url = `https://npiregistry.cms.hhs.gov/api/?version=2.1&city=${encodeURIComponent(cities[i])}&state=${encodeURIComponent(state)}&enumeration_type=${encodeURIComponent(enumType)}&limit=200`;
-      const resp = await fetch(`/api/npi-proxy?url=${encodeURIComponent(url)}`);
-      if (!resp.ok) throw new Error('NPI lookup failed');
-      const data = await resp.json();
-      const results = data.results || [];
-      // Filter by taxonomy
-      const filtered = results.filter(r =>
-        (r.taxonomies || []).some(t => codes.includes(t.code))
-      );
+      // Use paginated search endpoint for complete results
+      const searchResp = await fetch('/api/npi-search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          city: cities[i], state,
+          enumType,
+          taxonomyDesc: '',   // facility taxonomy descs are too generic, rely on code filter
+          taxonomyCodes: codes
+        })
+      });
+      if (!searchResp.ok) throw new Error('NPI lookup failed');
+      const searchData = await searchResp.json();
+      const filtered = searchData.results || [];
       allRaw.push(...filtered);
       if (i < cities.length - 1) await new Promise(res => setTimeout(res, 400));
     }
