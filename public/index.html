@@ -54,6 +54,10 @@
     top: 0; left: 0; bottom: 0;
     z-index: 100;
     box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
   }
 
   .sidebar-logo {
@@ -647,8 +651,8 @@
   .nav-group-arrow.collapsed { transform: rotate(-90deg); }
   .nav-group {
     overflow: hidden;
-    transition: max-height 0.25s ease;
-    max-height: 400px;
+    transition: max-height 0.3s ease;
+    max-height: 600px;
   }
   .nav-group.collapsed { max-height: 0; }
   .nav-item.nav-sub {
@@ -669,7 +673,12 @@
 <!-- SIDEBAR -->
 <nav id="sidebar">
   <div class="sidebar-logo">
-    <img src="data:image/png;base64,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" alt="Ally Psychiatry">
+    <div style="padding:4px 0;">
+      <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;color:#fff;letter-spacing:-0.5px;line-height:1.1;">
+        ally<span style="color:#ecc346;">psychiatry</span>
+      </div>
+      <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:2.5px;text-transform:uppercase;margin-top:3px;">BD Deal Tracker</div>
+    </div>
   </div>
   <div class="sidebar-label">Business Development</div>
   <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
@@ -2359,8 +2368,18 @@ function showPage(name) {
     team:'BD Team', import:'Import Data'
   };
   const subs = {
-    sourcing: 'NPI Registry Search · Primary Care & All Specialties',
-    retiring: 'NPI Registry Search · Late-Career Solo Provider Scoring'
+    sourcing:        'NPI Registry Search · Primary Care & All Specialties',
+    retiring:        'NPI Registry Search · Late-Career Solo Provider Scoring',
+    'bh-sourcing':   'NPI Registry Search · Individual Licensed BH Providers',
+    'hosp-sourcing': 'NPI Registry Search · Hospital Organizations',
+    'rhc-sourcing':  'NPI Registry Search · Rural Health Clinics & FQHCs',
+    'snf-sourcing':  'NPI Registry Search · Skilled Nursing Facilities',
+    'al-sourcing':   'NPI Registry Search · Assisted Living & Memory Care',
+    'bhc-sourcing':  'NPI Registry Search · Community Mental Health Centers',
+    'sud-sourcing':  'NPI Registry Search · Substance Abuse Facilities',
+    'corr-sourcing': 'Claude AI Web Search · Correctional Facilities',
+    'school-sourcing':'Claude AI Web Search · School Districts & Educational Institutions',
+    'emp-sourcing':  'Claude AI Web Search · Employers & Large Organizations',
   };
   document.getElementById('page-title').textContent = titles[name] || name;
   document.getElementById('page-sub').textContent = subs[name] || 'Business Development Tracker';
@@ -4058,6 +4077,16 @@ function expandGroupForPage(pageName) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// Ensure nav groups start expanded
+document.addEventListener('DOMContentLoaded', () => {
+  ['grp-provider', 'grp-facility'].forEach(id => {
+    const grp = document.getElementById(id);
+    const arrow = document.getElementById(id + '-arrow');
+    if (grp) grp.classList.remove('collapsed');
+    if (arrow) arrow.classList.remove('collapsed');
+  });
+});
+
 init();
 </script>
 </body>
