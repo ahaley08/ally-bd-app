@@ -194,7 +194,7 @@ Write a 2–3 sentence BD analyst note covering: (1) why this is or isn't a stro
 
 
 // ─── CLAUDE WEB SEARCH ─────────────────────────────────────────────────────────
-// Calls Anthropic API with web_search tool to find facility targets
+// Calls Anthropic API with web_search tool to find facility/employer/school targets
 app.post('/api/web-search', async (req, res) => {
   const { query, location, category } = req.body;
   if (!query || !location) return res.status(400).json({ error: 'query and location required' });
@@ -204,21 +204,25 @@ app.post('/api/web-search', async (req, res) => {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in environment variables.' });
   }
 
-  const prompt = `You are a healthcare business development researcher for Ally Psychiatry, a multi-state behavioral health organization. Search the web and find a list of ${category} targets in ${location}.
+  const prompt = `You are a healthcare business development researcher for Ally Psychiatry, a multi-state behavioral health organization.
 
-Search query to use: "${query} ${location}"
+Find a list of ${category} in ${location}. Search for: "${query} ${location}"
 
-Return ONLY a JSON array (no markdown, no explanation, just the raw JSON array) of up to 20 results. Each object must have these exact fields:
-- "name": organization name (string)
-- "address": street address if found, otherwise ""
-- "city": city (string)
-- "state": 2-letter state abbreviation (string)  
-- "phone": phone number if found, otherwise ""
-- "website": website URL if found, otherwise ""
-- "description": 1-sentence description of what this organization does (string)
-- "source": where you found this info (e.g. "official website", "Google listing", "state directory")
+Return ONLY a valid JSON array — no markdown fences, no explanation text before or after, just the raw JSON array starting with [ and ending with ].
 
-Only include real, verifiable organizations. Do not fabricate entries. If you find fewer than 20 real results, return what you find.`;
+Each object in the array must have exactly these fields:
+{
+  "name": "organization name",
+  "address": "street address or empty string",
+  "city": "city name",
+  "state": "2-letter state code",
+  "phone": "phone number or empty string",
+  "website": "website URL or empty string",
+  "description": "one sentence about what this organization does",
+  "source": "where you found this"
+}
+
+Return up to 20 real, verifiable organizations. Do not invent entries.`;
 
   try {
     const postData = JSON.stringify({
@@ -228,7 +232,7 @@ Only include real, verifiable organizations. Do not fabricate entries. If you fi
       messages: [{ role: 'user', content: prompt }]
     });
 
-    const result = await new Promise((resolve, reject) => {
+    const rawResponse = await new Promise((resolve, reject) => {
       const options = {
         hostname: 'api.anthropic.com',
         path: '/v1/messages',
@@ -247,7 +251,7 @@ Only include real, verifiable organizations. Do not fabricate entries. If you fi
         apiRes.on('data', chunk => body += chunk);
         apiRes.on('end', () => {
           try { resolve(JSON.parse(body)); }
-          catch (e) { reject(new Error('Invalid JSON from Anthropic')); }
+          catch (e) { reject(new Error('Invalid JSON from Anthropic: ' + body.slice(0, 200))); }
         });
       });
       apiReq.on('error', reject);
@@ -255,31 +259,115 @@ Only include real, verifiable organizations. Do not fabricate entries. If you fi
       apiReq.end();
     });
 
-    // Extract text from response — may go through tool use cycles
-    // Find the final text block in content
-    const content = result.content || [];
-    let jsonText = '';
-    for (const block of content) {
-      if (block.type === 'text' && block.text) {
-        jsonText = block.text;
+    // Log stop reason for debugging
+    console.log('Web search stop_reason:', rawResponse.stop_reason);
+    console.log('Web search content blocks:', (rawResponse.content || []).map(b => b.type));
+
+    // If Claude needs to continue (tool_use), we need to send follow-up messages
+    // Handle multi-turn tool use cycle
+    let finalText = '';
+    let messages = [{ role: 'user', content: prompt }];
+    let currentResponse = rawResponse;
+
+    // Loop up to 5 times to handle tool use cycles
+    for (let turn = 0; turn < 5; turn++) {
+      const content = currentResponse.content || [];
+      
+      // Collect any text blocks
+      const textBlocks = content.filter(b => b.type === 'text');
+      if (textBlocks.length > 0) {
+        finalText = textBlocks.map(b => b.text).join(' ');
       }
+
+      // If stop reason is end_turn or no tool_use blocks, we're done
+      const toolUseBlocks = content.filter(b => b.type === 'tool_use');
+      if (currentResponse.stop_reason === 'end_turn' || toolUseBlocks.length === 0) {
+        break;
+      }
+
+      // Add assistant response to messages
+      messages.push({ role: 'assistant', content: content });
+
+      // Add tool results for each tool_use block
+      const toolResults = toolUseBlocks.map(block => ({
+        type: 'tool_result',
+        tool_use_id: block.id,
+        content: block.input ? JSON.stringify(block.input) : ''
+      }));
+      messages.push({ role: 'user', content: toolResults });
+
+      // Make follow-up request
+      const followUpData = JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages
+      });
+
+      currentResponse = await new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'api.anthropic.com',
+          path: '/v1/messages',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'anthropic-version': '2023-06-01',
+            'anthropic-beta': 'web-search-2025-03-05',
+            'x-api-key': ANTHROPIC_API_KEY,
+            'Content-Length': Buffer.byteLength(followUpData)
+          }
+        };
+        const req2 = https.request(options, (r2) => {
+          let body = '';
+          r2.on('data', chunk => body += chunk);
+          r2.on('end', () => {
+            try { resolve(JSON.parse(body)); }
+            catch (e) { reject(new Error('Follow-up parse error: ' + body.slice(0, 200))); }
+          });
+        });
+        req2.on('error', reject);
+        req2.write(followUpData);
+        req2.end();
+      });
+
+      console.log(`Turn ${turn + 1} stop_reason:`, currentResponse.stop_reason);
     }
 
-    // Strip any markdown code fences if present
-    jsonText = jsonText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    // Get final text from last response if not already captured
+    if (!finalText) {
+      const lastContent = currentResponse.content || [];
+      finalText = lastContent.filter(b => b.type === 'text').map(b => b.text).join(' ');
+    }
 
-    // Parse the JSON array
+    console.log('Final text preview:', finalText.slice(0, 300));
+
+    // Strip markdown fences if present
+    let jsonText = finalText
+      .replace(/```json\s*/gi, '')
+      .replace(/```\s*/g, '')
+      .trim();
+
+    // Find the JSON array boundaries
+    const arrStart = jsonText.indexOf('[');
+    const arrEnd = jsonText.lastIndexOf(']');
+
+    if (arrStart === -1 || arrEnd === -1 || arrEnd <= arrStart) {
+      console.error('No JSON array found in response. Full text:', finalText.slice(0, 1000));
+      return res.status(500).json({ 
+        error: 'No results array found in response',
+        preview: finalText.slice(0, 500)
+      });
+    }
+
     let results = [];
     try {
-      // Find the JSON array — sometimes Claude adds a preamble
-      const arrStart = jsonText.indexOf('[');
-      const arrEnd = jsonText.lastIndexOf(']');
-      if (arrStart > -1 && arrEnd > arrStart) {
-        results = JSON.parse(jsonText.slice(arrStart, arrEnd + 1));
-      }
+      results = JSON.parse(jsonText.slice(arrStart, arrEnd + 1));
     } catch (e) {
-      console.error('JSON parse error:', e.message, '\nRaw:', jsonText.slice(0, 500));
-      return res.status(500).json({ error: 'Failed to parse search results', raw: jsonText.slice(0, 500) });
+      console.error('JSON parse error:', e.message);
+      return res.status(500).json({ 
+        error: 'Failed to parse results: ' + e.message,
+        preview: jsonText.slice(arrStart, arrStart + 500)
+      });
     }
 
     res.json({ results, query: `${query} ${location}`, count: results.length });
