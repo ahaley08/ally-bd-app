@@ -102,29 +102,100 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── NPI PROXY ─────────────────────────────────────────────────────────────────
-// Proxies requests to the CMS NPI Registry to avoid browser CORS issues
+// Simple proxy for single NPI API requests (used by facility search)
 app.get('/api/npi-proxy', async (req, res) => {
   const targetUrl = req.query.url;
   if (!targetUrl || !targetUrl.startsWith('https://npiregistry.cms.hhs.gov/')) {
     return res.status(400).json({ error: 'Invalid URL' });
   }
   try {
-    const data = await new Promise((resolve, reject) => {
-      https.get(targetUrl, (response) => {
-        let body = '';
-        response.on('data', chunk => body += chunk);
-        response.on('end', () => {
-          try { resolve(JSON.parse(body)); }
-          catch (e) { reject(new Error('Invalid JSON from NPI registry')); }
-        });
-      }).on('error', reject);
-    });
+    const data = await npiFetch(targetUrl);
     res.json(data);
   } catch (e) {
     console.error('NPI proxy error:', e.message);
     res.status(502).json({ error: 'NPI registry lookup failed', detail: e.message });
   }
 });
+
+// ─── NPI PAGINATED SEARCH ──────────────────────────────────────────────────────
+// Fetches ALL matching providers by paginating through NPI results with skip
+// Uses taxonomy_description for server-side filtering (much more accurate)
+app.post('/api/npi-search', async (req, res) => {
+  const { city, state, enumType = 'NPI-1', taxonomyDesc, taxonomyCodes } = req.body;
+  if (!city || !state) return res.status(400).json({ error: 'city and state required' });
+
+  try {
+    const allResults = [];
+    let skip = 0;
+    const LIMIT = 200;
+    let totalFetched = 0;
+    let pages = 0;
+    const MAX_PAGES = 10; // safety cap = 2000 results max per city
+
+    while (pages < MAX_PAGES) {
+      // Build URL — use taxonomy_description for server-side filtering when available
+      let url = `https://npiregistry.cms.hhs.gov/api/?version=2.1` +
+        `&city=${encodeURIComponent(city)}` +
+        `&state=${encodeURIComponent(state)}` +
+        `&enumeration_type=${encodeURIComponent(enumType)}` +
+        `&limit=${LIMIT}&skip=${skip}`;
+
+      // Add taxonomy description filter if provided (server-side pre-filter)
+      if (taxonomyDesc) {
+        url += `&taxonomy_description=${encodeURIComponent(taxonomyDesc)}`;
+      }
+
+      const data = await npiFetch(url);
+      const results = data.results || [];
+      const resultCount = data.result_count || 0;
+
+      // Client-side taxonomy code filter for precision
+      const filtered = taxonomyCodes && taxonomyCodes.length
+        ? results.filter(r => (r.taxonomies || []).some(t => taxonomyCodes.includes(t.code)))
+        : results;
+
+      allResults.push(...filtered);
+      totalFetched += results.length;
+      pages++;
+
+      // Stop if we got fewer than LIMIT (last page) or no results
+      if (results.length < LIMIT) break;
+
+      skip += LIMIT;
+      // Small delay between pages to be respectful to NPI API
+      await new Promise(r => setTimeout(r, 300));
+    }
+
+    // Deduplicate by NPI number
+    const seen = new Set();
+    const unique = allResults.filter(r => {
+      if (seen.has(r.number)) return false;
+      seen.add(r.number);
+      return true;
+    });
+
+    console.log(`NPI search ${city}, ${state} [${taxonomyDesc||'all'}]: ${unique.length} results (${pages} pages, ${totalFetched} raw)`);
+    res.json({ results: unique, total: unique.length, pages });
+
+  } catch (e) {
+    console.error('NPI search error:', e.message);
+    res.status(502).json({ error: 'NPI search failed: ' + e.message });
+  }
+});
+
+// ─── SHARED NPI FETCH HELPER ───────────────────────────────────────────────────
+function npiFetch(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (response) => {
+      let body = '';
+      response.on('data', chunk => body += chunk);
+      response.on('end', () => {
+        try { resolve(JSON.parse(body)); }
+        catch (e) { reject(new Error('Invalid JSON from NPI registry')); }
+      });
+    }).on('error', reject);
+  });
+}
 
 // ─── BD NOTE GENERATOR (AI-powered via Anthropic) ─────────────────────────────
 app.post('/api/bd-note', async (req, res) => {
