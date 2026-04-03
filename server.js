@@ -121,8 +121,8 @@ app.get('/api/npi-proxy', async (req, res) => {
 // Fetches ALL matching providers by paginating through NPI results with skip
 // Uses taxonomy_description for server-side filtering (much more accurate)
 app.post('/api/npi-search', async (req, res) => {
-  const { city, state, enumType = 'NPI-1', taxonomyDesc, taxonomyCodes } = req.body;
-  if (!city || !state) return res.status(400).json({ error: 'city and state required' });
+  const { city, state, zipCode, enumType = 'NPI-1', taxonomyDesc, taxonomyCodes } = req.body;
+  if (!city && !state && !zipCode) return res.status(400).json({ error: 'city+state, state, or zipCode required' });
 
   try {
     const allResults = [];
@@ -130,15 +130,21 @@ app.post('/api/npi-search', async (req, res) => {
     const LIMIT = 200;
     let totalFetched = 0;
     let pages = 0;
-    const MAX_PAGES = 10; // safety cap = 2000 results max per city
+    // State-wide searches can return more results; cap higher
+    const MAX_PAGES = (zipCode || city) ? 10 : 20;
 
     while (pages < MAX_PAGES) {
-      // Build URL — use taxonomy_description for server-side filtering when available
+      // Build URL — supports city+state, state-only, or ZIP
       let url = `https://npiregistry.cms.hhs.gov/api/?version=2.1` +
-        `&city=${encodeURIComponent(city)}` +
-        `&state=${encodeURIComponent(state)}` +
         `&enumeration_type=${encodeURIComponent(enumType)}` +
         `&limit=${LIMIT}&skip=${skip}`;
+
+      if (zipCode) {
+        url += `&postal_code=${encodeURIComponent(zipCode)}`;
+      } else {
+        if (city) url += `&city=${encodeURIComponent(city)}`;
+        if (state) url += `&state=${encodeURIComponent(state)}`;
+      }
 
       // Add taxonomy description filter if provided (server-side pre-filter)
       if (taxonomyDesc) {
