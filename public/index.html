@@ -940,31 +940,78 @@
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
 
           <!-- Corridor -->
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="ps-corridor" onchange="psCorridorChanged()">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="ps-geo-type" onchange="geoTypeChanged('ps')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-
-          <!-- Custom geo -->
-          <div id="ps-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="ps-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="ps-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="ps-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="ps-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="ps-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="ps-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="ps-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="ps-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="ps-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="ps-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="ps-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
 
@@ -1059,31 +1106,78 @@
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
 
           <!-- Corridor -->
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="ret-corridor" onchange="retCorridorChanged()">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="ret-geo-type" onchange="geoTypeChanged('ret')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-
-          <!-- Custom geo -->
-          <div id="ret-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="ret-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="ret-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="ret-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="ret-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="ret-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="ret-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="ret-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="ret-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="ret-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="ret-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="ret-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
 
@@ -1170,29 +1264,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="hosp-sourcing-corridor" onchange="fsSrcCorridorChanged('hosp-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="hosp-sourcing-geo-type" onchange="geoTypeChanged('hosp-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="hosp-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="hosp-sourcing-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="hosp-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="hosp-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="hosp-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="hosp-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="hosp-sourcing-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="hosp-sourcing-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="hosp-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="hosp-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="hosp-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="hosp-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 220px;">
@@ -1256,29 +1399,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="rhc-sourcing-corridor" onchange="fsSrcCorridorChanged('rhc-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="rhc-sourcing-geo-type" onchange="geoTypeChanged('rhc-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="rhc-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="rhc-sourcing-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="rhc-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="rhc-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="rhc-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="rhc-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="rhc-sourcing-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="rhc-sourcing-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="rhc-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="rhc-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="rhc-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="rhc-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 220px;">
@@ -1342,29 +1534,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="snf-sourcing-corridor" onchange="fsSrcCorridorChanged('snf-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="snf-sourcing-geo-type" onchange="geoTypeChanged('snf-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="snf-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="snf-sourcing-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="snf-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="snf-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="snf-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="snf-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="snf-sourcing-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="snf-sourcing-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="snf-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="snf-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="snf-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="snf-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 220px;">
@@ -1428,29 +1669,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="al-sourcing-corridor" onchange="fsSrcCorridorChanged('al-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="al-sourcing-geo-type" onchange="geoTypeChanged('al-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="al-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="al-sourcing-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="al-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="al-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="al-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="al-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="al-sourcing-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="al-sourcing-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="al-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="al-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="al-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="al-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 220px;">
@@ -1514,29 +1804,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="bhc-sourcing-corridor" onchange="fsSrcCorridorChanged('bhc-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="bhc-sourcing-geo-type" onchange="geoTypeChanged('bhc-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="bhc-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="bhc-sourcing-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="bhc-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="bhc-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="bhc-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="bhc-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="bhc-sourcing-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="bhc-sourcing-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="bhc-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="bhc-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="bhc-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="bhc-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 220px;">
@@ -1600,29 +1939,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="sud-sourcing-corridor" onchange="fsSrcCorridorChanged('sud-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="sud-sourcing-geo-type" onchange="geoTypeChanged('sud-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="sud-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="sud-sourcing-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="sud-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="sud-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="sud-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="sud-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="sud-sourcing-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="sud-sourcing-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="sud-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="sud-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="sud-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="sud-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 220px;">
@@ -1689,23 +2077,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 220px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="corr-sourcing-corridor">
-              <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
-              <option value="Nashville TN">Nashville Corridor (TN)</option>
-              <option value="Knoxville TN">Knoxville Corridor (TN)</option>
-              <option value="Huntsville AL">Huntsville / North AL</option>
-              <option value="Birmingham AL">Birmingham Metro (AL)</option>
-              <option value="Louisville KY">Louisville Corridor (KY)</option>
-              <option value="Charleston SC">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Location</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="corr-sourcing-geo-type" onchange="geoTypeChanged('corr-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="corr-sourcing-custom-wrap" style="display:none;flex:0 0 180px;">
+          <div id="corr-sourcing-geo-corridor" style="flex:1 1 200px;">
             <div class="form-group">
-              <label class="form-label">Custom City, State</label>
-              <input class="form-control" id="corr-sourcing-custom-loc" placeholder="e.g. Memphis TN">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="corr-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="corr-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="corr-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="corr-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="corr-sourcing-city-inp" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 68px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="corr-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div id="corr-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="corr-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 260px;">
@@ -1791,23 +2234,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 220px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="school-sourcing-corridor">
-              <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
-              <option value="Nashville TN">Nashville Corridor (TN)</option>
-              <option value="Knoxville TN">Knoxville Corridor (TN)</option>
-              <option value="Huntsville AL">Huntsville / North AL</option>
-              <option value="Birmingham AL">Birmingham Metro (AL)</option>
-              <option value="Louisville KY">Louisville Corridor (KY)</option>
-              <option value="Charleston SC">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Location</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="school-sourcing-geo-type" onchange="geoTypeChanged('school-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="school-sourcing-custom-wrap" style="display:none;flex:0 0 180px;">
+          <div id="school-sourcing-geo-corridor" style="flex:1 1 200px;">
             <div class="form-group">
-              <label class="form-label">Custom City, State</label>
-              <input class="form-control" id="school-sourcing-custom-loc" placeholder="e.g. Memphis TN">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="school-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="school-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="school-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="school-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="school-sourcing-city-inp" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 68px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="school-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div id="school-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="school-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 260px;">
@@ -1893,23 +2391,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 220px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="emp-sourcing-corridor">
-              <option value="Chattanooga TN">Chattanooga Corridor (TN)</option>
-              <option value="Nashville TN">Nashville Corridor (TN)</option>
-              <option value="Knoxville TN">Knoxville Corridor (TN)</option>
-              <option value="Huntsville AL">Huntsville / North AL</option>
-              <option value="Birmingham AL">Birmingham Metro (AL)</option>
-              <option value="Louisville KY">Louisville Corridor (KY)</option>
-              <option value="Charleston SC">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Location</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="emp-sourcing-geo-type" onchange="geoTypeChanged('emp-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="emp-sourcing-custom-wrap" style="display:none;flex:0 0 180px;">
+          <div id="emp-sourcing-geo-corridor" style="flex:1 1 200px;">
             <div class="form-group">
-              <label class="form-label">Custom City, State</label>
-              <input class="form-control" id="emp-sourcing-custom-loc" placeholder="e.g. Memphis TN">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="emp-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="emp-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="emp-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="emp-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label">City</label>
+                <input class="form-control" id="emp-sourcing-city-inp" placeholder="e.g. Memphis">
+              </div>
+              <div class="form-group" style="flex:0 0 68px;">
+                <label class="form-label">State</label>
+                <input class="form-control" id="emp-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+              </div>
+            </div>
+          </div>
+          <div id="emp-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="emp-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 260px;">
@@ -1992,29 +2545,78 @@
       </div>
       <div class="card-body">
         <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:1 1 240px;">
-            <label class="form-label">Geography / Corridor</label>
-            <select class="form-control" id="bh-sourcing-corridor" onchange="fsSrcCorridorChanged('bh-sourcing')">
-              <option value="nashville">Nashville Corridor (TN)</option>
-              <option value="chattanooga">Chattanooga Corridor (TN)</option>
-              <option value="knoxville">Knoxville Corridor (TN)</option>
-              <option value="huntsville">Huntsville / North AL</option>
-              <option value="birmingham">Birmingham Metro (AL)</option>
-              <option value="louisville">Louisville Corridor (KY)</option>
-              <option value="charleston">Charleston / Lowcountry (SC)</option>
-              <option value="custom">Custom Geography</option>
+          <div class="form-group" style="flex:0 0 130px;">
+            <label class="form-label">Search By</label>
+            <select class="form-control" id="bh-sourcing-geo-type" onchange="geoTypeChanged('bh-sourcing')">
+              <option value="corridor">Corridor</option>
+              <option value="state">State</option>
+              <option value="city">City + State</option>
+              <option value="zip">ZIP Code</option>
             </select>
           </div>
-          <div id="bh-sourcing-custom-wrap" style="display:none;flex:1 1 280px;">
-            <div style="display:flex;gap:10px;">
+          <div id="bh-sourcing-geo-corridor" style="flex:1 1 200px;">
+            <div class="form-group">
+              <label class="form-label">Corridor</label>
+              <select class="form-control" id="bh-sourcing-corridor-sel">
+                <option value="nashville">Nashville Corridor (TN)</option>
+                <option value="chattanooga">Chattanooga Corridor (TN)</option>
+                <option value="knoxville">Knoxville Corridor (TN)</option>
+                <option value="huntsville">Huntsville / North AL</option>
+                <option value="birmingham">Birmingham Metro (AL)</option>
+                <option value="louisville">Louisville Corridor (KY)</option>
+                <option value="charleston">Charleston / Lowcountry (SC)</option>
+              </select>
+            </div>
+          </div>
+          <div id="bh-sourcing-geo-state" style="display:none;flex:0 0 160px;">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-control" id="bh-sourcing-state-sel">
+                <option value="">Select...</option>
+                <option value="AL">Alabama (AL)</option><option value="AK">Alaska (AK)</option>
+                <option value="AZ">Arizona (AZ)</option><option value="AR">Arkansas (AR)</option>
+                <option value="CA">California (CA)</option><option value="CO">Colorado (CO)</option>
+                <option value="CT">Connecticut (CT)</option><option value="DE">Delaware (DE)</option>
+                <option value="FL">Florida (FL)</option><option value="GA">Georgia (GA)</option>
+                <option value="HI">Hawaii (HI)</option><option value="ID">Idaho (ID)</option>
+                <option value="IL">Illinois (IL)</option><option value="IN">Indiana (IN)</option>
+                <option value="IA">Iowa (IA)</option><option value="KS">Kansas (KS)</option>
+                <option value="KY">Kentucky (KY)</option><option value="LA">Louisiana (LA)</option>
+                <option value="ME">Maine (ME)</option><option value="MD">Maryland (MD)</option>
+                <option value="MA">Massachusetts (MA)</option><option value="MI">Michigan (MI)</option>
+                <option value="MN">Minnesota (MN)</option><option value="MS">Mississippi (MS)</option>
+                <option value="MO">Missouri (MO)</option><option value="MT">Montana (MT)</option>
+                <option value="NE">Nebraska (NE)</option><option value="NV">Nevada (NV)</option>
+                <option value="NH">New Hampshire (NH)</option><option value="NJ">New Jersey (NJ)</option>
+                <option value="NM">New Mexico (NM)</option><option value="NY">New York (NY)</option>
+                <option value="NC">North Carolina (NC)</option><option value="ND">North Dakota (ND)</option>
+                <option value="OH">Ohio (OH)</option><option value="OK">Oklahoma (OK)</option>
+                <option value="OR">Oregon (OR)</option><option value="PA">Pennsylvania (PA)</option>
+                <option value="RI">Rhode Island (RI)</option><option value="SC">South Carolina (SC)</option>
+                <option value="SD">South Dakota (SD)</option><option value="TN">Tennessee (TN)</option>
+                <option value="TX">Texas (TX)</option><option value="UT">Utah (UT)</option>
+                <option value="VT">Vermont (VT)</option><option value="VA">Virginia (VA)</option>
+                <option value="WA">Washington (WA)</option><option value="WV">West Virginia (WV)</option>
+                <option value="WI">Wisconsin (WI)</option><option value="WY">Wyoming (WY)</option>
+              </select>
+            </div>
+          </div>
+          <div id="bh-sourcing-geo-city" style="display:none;flex:1 1 240px;">
+            <div style="display:flex;gap:8px;">
               <div class="form-group" style="flex:1;">
                 <label class="form-label">City</label>
-                <input class="form-control" id="bh-sourcing-custom-city" placeholder="e.g. Memphis">
+                <input class="form-control" id="bh-sourcing-city-inp" placeholder="e.g. Memphis">
               </div>
-              <div class="form-group" style="flex:0 0 70px;">
+              <div class="form-group" style="flex:0 0 68px;">
                 <label class="form-label">State</label>
-                <input class="form-control" id="bh-sourcing-custom-state" placeholder="TN" maxlength="2" style="text-transform:uppercase">
+                <input class="form-control" id="bh-sourcing-city-state-inp" placeholder="TN" maxlength="2" style="text-transform:uppercase">
               </div>
+            </div>
+          </div>
+          <div id="bh-sourcing-geo-zip" style="display:none;flex:0 0 140px;">
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input class="form-control" id="bh-sourcing-zip-inp" placeholder="e.g. 37201" maxlength="5">
             </div>
           </div>
           <div class="form-group" style="flex:1 1 220px;">
@@ -2994,6 +3596,107 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  GEO SEARCH — Shared helpers for all sourcing pages
+// ══════════════════════════════════════════════════════════════════════════════
+
+function geoTypeChanged(prefix) {
+  const type = document.getElementById(`${prefix}-geo-type`).value;
+  const panels = ['corridor','state','city','zip'];
+  panels.forEach(p => {
+    const el = document.getElementById(`${prefix}-geo-${p}`);
+    if (el) el.style.display = p === type ? (p === 'state' || p === 'zip' ? 'flex' : 'block') : 'none';
+  });
+  // flex for compact inputs, block for wider ones
+  const active = document.getElementById(`${prefix}-geo-${type}`);
+  if (active) active.style.display = 'flex';
+}
+
+// Returns { cities, state, zipCode, geoLabel, isStateWide, isSingleCity, isZip }
+function getGeoParams(prefix) {
+  const type = document.getElementById(`${prefix}-geo-type`)?.value || 'corridor';
+
+  if (type === 'corridor') {
+    const corridorKey = document.getElementById(`${prefix}-corridor-sel`)?.value;
+    const c = NPI_CORRIDORS[corridorKey];
+    if (!c) return null;
+    return {
+      type: 'corridor',
+      cities: c.cities,
+      state: c.state,
+      zipCode: null,
+      geoLabel: document.getElementById(`${prefix}-corridor-sel`).options[
+        document.getElementById(`${prefix}-corridor-sel`).selectedIndex
+      ]?.text || corridorKey
+    };
+  }
+
+  if (type === 'state') {
+    const state = document.getElementById(`${prefix}-state-sel`)?.value;
+    if (!state) { toast('Please select a state', 'error'); return null; }
+    // For state-wide search: use major cities in that state from corridors,
+    // plus search with just state (NPI API supports state-only search)
+    return {
+      type: 'state',
+      cities: [],  // empty = state-wide search (no city filter)
+      state,
+      zipCode: null,
+      geoLabel: state
+    };
+  }
+
+  if (type === 'city') {
+    const city  = (document.getElementById(`${prefix}-city-inp`)?.value || '').trim();
+    const state = (document.getElementById(`${prefix}-city-state-inp`)?.value || '').trim().toUpperCase();
+    if (!city || !state) { toast('Please enter both a city and state', 'error'); return null; }
+    return {
+      type: 'city',
+      cities: [city],
+      state,
+      zipCode: null,
+      geoLabel: `${city}, ${state}`
+    };
+  }
+
+  if (type === 'zip') {
+    const zip = (document.getElementById(`${prefix}-zip-inp`)?.value || '').trim();
+    if (!zip || zip.length < 5) { toast('Please enter a valid 5-digit ZIP code', 'error'); return null; }
+    return {
+      type: 'zip',
+      cities: [],
+      state: '',
+      zipCode: zip,
+      geoLabel: `ZIP ${zip}`
+    };
+  }
+
+  return null;
+}
+
+// Get location string for Claude AI searches (corr/school/emp)
+function getGeoLocationString(prefix) {
+  const type = document.getElementById(`${prefix}-geo-type`)?.value || 'corridor';
+  if (type === 'corridor') {
+    return document.getElementById(`${prefix}-corridor-sel`)?.options[
+      document.getElementById(`${prefix}-corridor-sel`).selectedIndex
+    ]?.text || '';
+  }
+  if (type === 'state') {
+    const st = document.getElementById(`${prefix}-state-sel`)?.value;
+    return st || '';
+  }
+  if (type === 'city') {
+    const city  = (document.getElementById(`${prefix}-city-inp`)?.value || '').trim();
+    const state = (document.getElementById(`${prefix}-city-state-inp`)?.value || '').trim().toUpperCase();
+    return city && state ? `${city} ${state}` : '';
+  }
+  if (type === 'zip') {
+    return (document.getElementById(`${prefix}-zip-inp`)?.value || '').trim();
+  }
+  return '';
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 //  SHARED NPI SEARCH UTILITIES
 // ══════════════════════════════════════════════════════════════════════════════
@@ -3100,25 +3803,58 @@ function npiParseProvider(r) {
   };
 }
 
-async function npiRunCorridorSearch(corridorKey, customCity, customState, taxonomyCodes, loadingMsgEl, taxonomyDesc) {
-  let cities, state;
-  if (corridorKey === 'custom') {
-    cities = [customCity]; state = customState;
-  } else {
-    const c = NPI_CORRIDORS[corridorKey];
-    cities = c.cities; state = c.state;
-  }
+async function npiRunCorridorSearch(geoParams, taxonomyCodes, loadingMsgEl, taxonomyDesc, enumType) {
+  const { cities, state, zipCode, geoLabel, type } = geoParams;
   const allRaw = [];
-  for (let i = 0; i < cities.length; i++) {
-    if (loadingMsgEl) loadingMsgEl.textContent = `Searching ${cities[i]}, ${state}... (${i+1}/${cities.length})`;
-    // Pass taxonomy desc for server-side pre-filtering + codes for client precision
-    const raw = await npiSearchCity(cities[i], state, taxonomyDesc || '', taxonomyCodes, 'NPI-1');
+  const eType = enumType || 'NPI-1';
+
+  if (type === 'zip') {
+    // ZIP search
+    if (loadingMsgEl) loadingMsgEl.textContent = `Searching ZIP ${zipCode}...`;
+    const raw = await npiSearchZip(zipCode, taxonomyDesc || '', taxonomyCodes, eType);
     allRaw.push(...raw);
-    if (i < cities.length - 1) await new Promise(res => setTimeout(res, 500));
+  } else if (type === 'state') {
+    // State-wide: no city filter — searches entire state paginated
+    if (loadingMsgEl) loadingMsgEl.textContent = `Searching ${state} statewide...`;
+    const raw = await npiSearchState(state, taxonomyDesc || '', taxonomyCodes, eType);
+    allRaw.push(...raw);
+  } else {
+    // Corridor or city — search each city
+    for (let i = 0; i < cities.length; i++) {
+      if (loadingMsgEl) loadingMsgEl.textContent = `Searching ${cities[i]}, ${state}... (${i+1}/${cities.length})`;
+      const raw = await npiSearchCity(cities[i], state, taxonomyDesc || '', taxonomyCodes, eType);
+      allRaw.push(...raw);
+      if (i < cities.length - 1) await new Promise(res => setTimeout(res, 500));
+    }
   }
+
   // Deduplicate by NPI number
   const seen = new Set();
   return allRaw.filter(r => { if (seen.has(r.number)) return false; seen.add(r.number); return true; });
+}
+
+// Search by ZIP code
+async function npiSearchZip(zipCode, taxonomyDesc, taxonomyCodes, enumType) {
+  const resp = await fetch('/api/npi-search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ zipCode, enumType: enumType || 'NPI-1', taxonomyDesc, taxonomyCodes })
+  });
+  if (!resp.ok) throw new Error('NPI ZIP search failed');
+  const data = await resp.json();
+  return data.results || [];
+}
+
+// State-wide search (no city filter)
+async function npiSearchState(state, taxonomyDesc, taxonomyCodes, enumType) {
+  const resp = await fetch('/api/npi-search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ state, enumType: enumType || 'NPI-1', taxonomyDesc, taxonomyCodes })
+  });
+  if (!resp.ok) throw new Error('NPI state search failed');
+  const data = await resp.json();
+  return data.results || [];
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -3148,18 +3884,13 @@ function psSetAffFilter(val, el) {
 }
 
 async function psRunSearch() {
-  const corridorKey = document.getElementById('ps-corridor').value;
-  const customCity  = document.getElementById('ps-custom-city')?.value.trim() || '';
-  const customState = document.getElementById('ps-custom-state')?.value.trim().toUpperCase() || '';
+  const psGeo = getGeoParams('ps');
+  if (!psGeo) return;
   const specialtySel = document.getElementById('ps-specialty');
   const codes = specialtySel.value.split(',');
   const selectedOpt = specialtySel.options[specialtySel.selectedIndex];
   const taxDesc = selectedOpt ? (selectedOpt.dataset.desc || '') : '';
   const btn = document.getElementById('ps-run-btn');
-
-  if (corridorKey === 'custom' && (!customCity || !customState)) {
-    toast('Enter a city and state for custom search', 'error'); return;
-  }
 
   btn.disabled = true; btn.textContent = 'Searching...';
   document.getElementById('ps-empty-state').style.display = 'none';
@@ -3168,7 +3899,7 @@ async function psRunSearch() {
 
   try {
     const raw = await npiRunCorridorSearch(
-      corridorKey, customCity, customState, codes,
+      psGeo, codes,
       document.getElementById('ps-loading-msg'), taxDesc
     );
     psResults = raw.map(npiParseProvider).filter(p => !p.deactivated);
@@ -3351,18 +4082,13 @@ function retSetTierFilter(tier, el) {
 }
 
 async function retRunSearch() {
-  const corridorKey = document.getElementById('ret-corridor').value;
-  const customCity  = document.getElementById('ret-custom-city')?.value.trim() || '';
-  const customState = document.getElementById('ret-custom-state')?.value.trim().toUpperCase() || '';
+  const retGeo = getGeoParams('ret');
+  if (!retGeo) return;
   const retSpecSel = document.getElementById('ret-specialty');
   const codes = retSpecSel.value.split(',');
   const retSelOpt = retSpecSel.options[retSpecSel.selectedIndex];
   const retTaxDesc = retSelOpt ? (retSelOpt.dataset.desc || '') : '';
   const btn = document.getElementById('ret-run-btn');
-
-  if (corridorKey === 'custom' && (!customCity || !customState)) {
-    toast('Enter a city and state for custom search', 'error'); return;
-  }
 
   btn.disabled = true; btn.textContent = 'Searching...';
   document.getElementById('ret-empty-state').style.display = 'none';
@@ -3371,7 +4097,7 @@ async function retRunSearch() {
 
   try {
     const raw = await npiRunCorridorSearch(
-      corridorKey, customCity, customState, codes,
+      retGeo, codes,
       document.getElementById('ret-loading-msg'), retTaxDesc
     );
     retResults = raw.map(r => {
@@ -3696,15 +4422,10 @@ function fsSrcTierFilter(pageId, tier, el) {
 async function fsSrcRun(pageId) {
   const specKey  = FS_PAGE_MAP[pageId];
   const taxDef   = FS_TAXONOMY[specKey];
-  const corridorKey = document.getElementById(`${pageId}-corridor`).value;
-  const customCity  = (document.getElementById(`${pageId}-custom-city`)?.value || '').trim();
-  const customState = (document.getElementById(`${pageId}-custom-state`)?.value || '').trim().toUpperCase();
+  const fsGeo = getGeoParams(pageId);
+  if (!fsGeo) return;
   const codes = document.getElementById(`${pageId}-specialty`).value.split(',');
   const btn = document.getElementById(`${pageId}-run-btn`);
-
-  if (corridorKey === 'custom' && (!customCity || !customState)) {
-    toast('Enter a city and state for custom search', 'error'); return;
-  }
 
   btn.disabled = true; btn.textContent = 'Searching...';
   document.getElementById(`${pageId}-empty-state`).style.display = 'none';
@@ -3945,11 +4666,8 @@ document.addEventListener('change', function(e) {
 });
 
 async function csrcRun(pageId, categoryLabel) {
-  const corridorSel = document.getElementById(`${pageId}-corridor`);
-  let location = corridorSel.value === 'custom'
-    ? (document.getElementById(`${pageId}-custom-loc`)?.value || '').trim()
-    : corridorSel.value;
-  if (!location) { toast('Select a corridor or enter a location', 'error'); return; }
+  const location = getGeoLocationString(pageId);
+  if (!location) { toast('Select a geography to search', 'error'); return; }
 
   const querySel = document.getElementById(`${pageId}-query`);
   let query = querySel.value === 'custom'
