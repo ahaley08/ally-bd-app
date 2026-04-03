@@ -4433,41 +4433,8 @@ async function fsSrcRun(pageId) {
   document.getElementById(`${pageId}-loading-state`).style.display = 'block';
 
   try {
-    let cities, state;
-    if (corridorKey === 'custom') {
-      cities = [customCity]; state = customState;
-    } else {
-      const c = NPI_CORRIDORS[corridorKey];
-      cities = c.cities; state = c.state;
-    }
-
-    const allRaw = [];
-    const enumType = taxDef.enumType;
-    for (let i = 0; i < cities.length; i++) {
-      document.getElementById(`${pageId}-loading-msg`).textContent =
-        `Searching ${cities[i]}, ${state}... (${i+1}/${cities.length})`;
-      // Build NPI API URL — Type 2 searches by organization_name city/state
-      // Use paginated search endpoint for complete results
-      const searchResp = await fetch('/api/npi-search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          city: cities[i], state,
-          enumType,
-          taxonomyDesc: '',   // facility taxonomy descs are too generic, rely on code filter
-          taxonomyCodes: codes
-        })
-      });
-      if (!searchResp.ok) throw new Error('NPI lookup failed');
-      const searchData = await searchResp.json();
-      const filtered = searchData.results || [];
-      allRaw.push(...filtered);
-      if (i < cities.length - 1) await new Promise(res => setTimeout(res, 400));
-    }
-
-    // Deduplicate by NPI
-    const seen = new Set();
-    const unique = allRaw.filter(r => { if (seen.has(r.number)) return false; seen.add(r.number); return true; });
+    const loadMsg = document.getElementById(`${pageId}-loading-msg`);
+    const unique = await npiRunCorridorSearch(fsGeo, codes, loadMsg, '', taxDef.enumType);
 
     // Parse
     const state2 = fsGetState(pageId);
