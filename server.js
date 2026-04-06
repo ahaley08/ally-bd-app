@@ -284,11 +284,10 @@ app.post('/api/web-search', async (req, res) => {
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set.' });
 
-  // Helper to call Anthropic API
   async function callClaude(messages) {
     const body = JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 4000,
+      max_tokens: 2000,
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
       messages
     });
@@ -308,15 +307,8 @@ app.post('/api/web-search', async (req, res) => {
         let b = '';
         r.on('data', c => b += c);
         r.on('end', () => {
-          try {
-            const parsed = JSON.parse(b);
-            console.log('Claude response:', JSON.stringify({
-              stop_reason: parsed.stop_reason,
-              error: parsed.error,
-              content_types: (parsed.content||[]).map(x=>x.type)
-            }));
-            resolve(parsed);
-          } catch(e) { reject(new Error('Bad JSON: ' + b.slice(0,300))); }
+          try { resolve(JSON.parse(b)); }
+          catch(e) { reject(new Error('Bad JSON: ' + b.slice(0,200))); }
         });
       });
       req2.on('error', reject);
@@ -326,86 +318,72 @@ app.post('/api/web-search', async (req, res) => {
   }
 
   try {
-    const userMsg = `Search the web for ${category} in ${location}. Query: "${query} ${location}". ` +
-      `After searching, reply with ONLY a JSON array (no markdown, no explanation). ` +
-      `Each item: {"name":"","address":"","city":"","state":"","phone":"","website":"","description":"","source":""}. ` +
-      `Up to 15 real organizations only.`;
+    // Keep prompt SHORT to stay under 10k token/min rate limit
+    const userMsg = `Find ${category} in ${location}. Search: "${query} ${location}". Reply with JSON array only: [{"name":"","city":"","state":"","phone":"","website":"","description":""}]. Max 10 results.`;
 
     let messages = [{ role: 'user', content: userMsg }];
     let allText = '';
 
-    for (let turn = 0; turn < 8; turn++) {
+    for (let turn = 0; turn < 6; turn++) {
+      // Small delay to avoid rate limit bursts
+      if (turn > 0) await new Promise(r => setTimeout(r, 1000));
+
       const data = await callClaude(messages);
 
-      // Check for API error
       if (data.error) {
-        console.error('Anthropic API error:', JSON.stringify(data.error));
-        return res.status(500).json({ error: `Anthropic API error: ${data.error.message || JSON.stringify(data.error)}` });
+        const msg = data.error.message || JSON.stringify(data.error);
+        console.error('Anthropic error:', msg);
+        // Rate limit — tell user to wait
+        if (msg.includes('rate limit')) {
+          return res.status(429).json({ error: 'Rate limit hit — please wait 30 seconds and try again.' });
+        }
+        return res.status(500).json({ error: 'Anthropic API error: ' + msg });
       }
 
       const content = data.content || [];
-
-      // Collect all text blocks from this turn
       content.filter(b => b.type === 'text').forEach(b => { allText += ' ' + b.text; });
 
-      console.log(`Turn ${turn+1}: stop=${data.stop_reason}, text_so_far=${allText.length} chars`);
+      console.log(`Turn ${turn+1}: stop=${data.stop_reason} text=${allText.length}chars`);
 
       if (data.stop_reason === 'end_turn') break;
 
       if (data.stop_reason === 'tool_use') {
-        // Add assistant message and prompt to continue
         messages.push({ role: 'assistant', content });
-        messages.push({ role: 'user', content: 'Now provide the JSON array of results you found.' });
+        messages.push({ role: 'user', content: 'Now give the JSON array.' });
         continue;
       }
-
-      // Any other stop reason — break
       break;
     }
 
     allText = allText.trim();
-    console.log('Total text collected:', allText.length, 'chars');
-    console.log('Preview:', allText.slice(0, 400));
-
     if (!allText) {
-      return res.status(500).json({ error: 'Claude returned no text. The web search beta may not be enabled for this API key. Check your Anthropic account at console.anthropic.com.' });
+      return res.status(500).json({ error: 'No response from Claude. Try again in 30 seconds.' });
     }
 
-    // Parse JSON — try multiple strategies
+    // Parse JSON
     let results = [];
     const clean = allText.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-
-    // Strategy 1: find outermost [...] 
-    const a1 = clean.indexOf('[');
-    const a2 = clean.lastIndexOf(']');
+    const a1 = clean.indexOf('['), a2 = clean.lastIndexOf(']');
     if (a1 !== -1 && a2 > a1) {
-      try { results = JSON.parse(clean.slice(a1, a2+1)); }
-      catch(e) { console.log('Array parse failed:', e.message.slice(0,100)); }
+      try { results = JSON.parse(clean.slice(a1, a2+1)); } catch(e) {}
     }
-
-    // Strategy 2: extract individual objects
+    // Fallback: extract individual objects
     if (!results.length) {
-      let depth = 0, start = -1, objs = [];
+      let depth = 0, start = -1;
       for (let i = 0; i < clean.length; i++) {
-        if (clean[i] === '{') { if (depth === 0) start = i; depth++; }
-        else if (clean[i] === '}') {
+        if (clean[i] === '{') { if (!depth) start = i; depth++; }
+        else if (clean[i] === '}' && depth) {
           depth--;
-          if (depth === 0 && start !== -1) {
-            try { objs.push(JSON.parse(clean.slice(start, i+1))); } catch(e) {}
-            start = -1;
+          if (!depth && start !== -1) {
+            try { const o = JSON.parse(clean.slice(start, i+1)); if (o.name) results.push(o); } catch(e) {}
           }
         }
       }
-      results = objs.filter(o => o.name);
-      if (results.length) console.log('Strategy 2 extracted', results.length, 'objects');
     }
 
     if (!results.length) {
-      console.error('Parse failed. Full text:', allText.slice(0,2000));
-      return res.status(500).json({
-        error: 'Search ran but results could not be formatted. Try a more specific query.',
-        preview: allText.slice(0, 400)
-      });
+      console.error('Parse failed, text was:', allText.slice(0,500));
+      return res.status(500).json({ error: 'Could not parse results. Try a different query.', preview: allText.slice(0,300) });
     }
 
     res.json({ results, query: `${query} ${location}`, count: results.length });
