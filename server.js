@@ -277,118 +277,37 @@ Write a 2–3 sentence BD analyst note covering: (1) why this is or isn't a stro
 
 
 // ─── CLAUDE WEB SEARCH ─────────────────────────────────────────────────────────
-// Calls Anthropic API with web_search tool to find facility/employer/school targets
 app.post('/api/web-search', async (req, res) => {
   const { query, location, category } = req.body;
   if (!query || !location) return res.status(400).json({ error: 'query and location required' });
 
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-  if (!ANTHROPIC_API_KEY) {
-    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in environment variables.' });
-  }
+  if (!ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set.' });
 
-  const prompt = `You are a healthcare business development researcher for Ally Psychiatry, a multi-state behavioral health organization.
-
-Find a list of ${category} in ${location}. Search for: "${query} ${location}"
-
-Return ONLY a valid JSON array — no markdown fences, no explanation text before or after, just the raw JSON array starting with [ and ending with ].
-
-Each object in the array must have exactly these fields:
-{
-  "name": "organization name",
-  "address": "street address or empty string",
-  "city": "city name",
-  "state": "2-letter state code",
-  "phone": "phone number or empty string",
-  "website": "website URL or empty string",
-  "description": "one sentence about what this organization does",
-  "source": "where you found this"
-}
-
-Return up to 20 real, verifiable organizations. Do not invent entries.`;
+  const systemPrompt = `You are a healthcare business development researcher for Ally Psychiatry.
+Use your web search tool to find ${category} in ${location}.
+Search for: "${query} ${location}"
+After searching, respond with ONLY a valid JSON array. No markdown, no explanation, no text outside the array.
+Each object must have: name, address, city, state, phone, website, description, source.
+Return up to 20 real verified organizations only.`;
 
   try {
-    const postData = JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 4000,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{ role: 'user', content: prompt }]
-    });
-
-    const rawResponse = await new Promise((resolve, reject) => {
-      const options = {
-        hostname: 'api.anthropic.com',
-        path: '/v1/messages',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01',
-          'anthropic-beta': 'web-search-2025-03-05',
-          'x-api-key': ANTHROPIC_API_KEY,
-          'Content-Length': Buffer.byteLength(postData)
-        }
-      };
-
-      const apiReq = https.request(options, (apiRes) => {
-        let body = '';
-        apiRes.on('data', chunk => body += chunk);
-        apiRes.on('end', () => {
-          try { resolve(JSON.parse(body)); }
-          catch (e) { reject(new Error('Invalid JSON from Anthropic: ' + body.slice(0, 200))); }
-        });
-      });
-      apiReq.on('error', reject);
-      apiReq.write(postData);
-      apiReq.end();
-    });
-
-    // Log stop reason for debugging
-    console.log('Web search stop_reason:', rawResponse.stop_reason);
-    console.log('Web search content blocks:', (rawResponse.content || []).map(b => b.type));
-
-    // If Claude needs to continue (tool_use), we need to send follow-up messages
-    // Handle multi-turn tool use cycle
+    let messages = [{ role: 'user', content: `Find ${category} in ${location}. Search: "${query} ${location}". Return JSON array only.` }];
     let finalText = '';
-    let messages = [{ role: 'user', content: prompt }];
-    let currentResponse = rawResponse;
+    let lastResponse = null;
 
-    // Loop up to 5 times to handle tool use cycles
-    for (let turn = 0; turn < 5; turn++) {
-      const content = currentResponse.content || [];
-      
-      // Collect any text blocks
-      const textBlocks = content.filter(b => b.type === 'text');
-      if (textBlocks.length > 0) {
-        finalText = textBlocks.map(b => b.text).join(' ');
-      }
-
-      // If stop reason is end_turn or no tool_use blocks, we're done
-      const toolUseBlocks = content.filter(b => b.type === 'tool_use');
-      if (currentResponse.stop_reason === 'end_turn' || toolUseBlocks.length === 0) {
-        break;
-      }
-
-      // Add assistant response to messages
-      messages.push({ role: 'assistant', content: content });
-
-      // Add tool results for each tool_use block
-      const toolResults = toolUseBlocks.map(block => ({
-        type: 'tool_result',
-        tool_use_id: block.id,
-        content: block.input ? JSON.stringify(block.input) : ''
-      }));
-      messages.push({ role: 'user', content: toolResults });
-
-      // Make follow-up request
-      const followUpData = JSON.stringify({
+    // Loop up to 6 turns to handle web search tool cycles
+    for (let turn = 0; turn < 6; turn++) {
+      const postData = JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 4000,
+        system: systemPrompt,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages
       });
 
-      currentResponse = await new Promise((resolve, reject) => {
-        const options = {
+      const response = await new Promise((resolve, reject) => {
+        const opts = {
           hostname: 'api.anthropic.com',
           path: '/v1/messages',
           method: 'POST',
@@ -397,59 +316,90 @@ Return up to 20 real, verifiable organizations. Do not invent entries.`;
             'anthropic-version': '2023-06-01',
             'anthropic-beta': 'web-search-2025-03-05',
             'x-api-key': ANTHROPIC_API_KEY,
-            'Content-Length': Buffer.byteLength(followUpData)
+            'Content-Length': Buffer.byteLength(postData)
           }
         };
-        const req2 = https.request(options, (r2) => {
+        const r = https.request(opts, (apiRes) => {
           let body = '';
-          r2.on('data', chunk => body += chunk);
-          r2.on('end', () => {
+          apiRes.on('data', c => body += c);
+          apiRes.on('end', () => {
             try { resolve(JSON.parse(body)); }
-            catch (e) { reject(new Error('Follow-up parse error: ' + body.slice(0, 200))); }
+            catch (e) { reject(new Error('Bad JSON from Anthropic: ' + body.slice(0, 300))); }
           });
         });
-        req2.on('error', reject);
-        req2.write(followUpData);
-        req2.end();
+        r.on('error', reject);
+        r.write(postData);
+        r.end();
       });
 
-      console.log(`Turn ${turn + 1} stop_reason:`, currentResponse.stop_reason);
+      lastResponse = response;
+      const content = response.content || [];
+      console.log(`Turn ${turn + 1}: stop_reason=${response.stop_reason}, blocks=${content.map(b=>b.type).join(',')}`);
+
+      // Collect text from this turn
+      const textBlocks = content.filter(b => b.type === 'text');
+      if (textBlocks.length) finalText = textBlocks.map(b => b.text).join(' ');
+
+      // If done, stop
+      if (response.stop_reason === 'end_turn') break;
+
+      // Handle tool_use — add assistant turn + tool_result turn
+      const toolUseBlocks = content.filter(b => b.type === 'tool_use');
+      if (!toolUseBlocks.length) break;
+
+      // Add assistant message
+      messages.push({ role: 'assistant', content });
+
+      // Add tool results — for web_search the API handles the actual search,
+      // we just need to acknowledge each tool_use block with an empty result
+      // so the model continues to its synthesis turn
+      messages.push({
+        role: 'user',
+        content: toolUseBlocks.map(block => ({
+          type: 'tool_result',
+          tool_use_id: block.id,
+          content: 'Search completed. Now provide the JSON array of results.'
+        }))
+      });
     }
 
-    // Get final text from last response if not already captured
-    if (!finalText) {
-      const lastContent = currentResponse.content || [];
-      finalText = lastContent.filter(b => b.type === 'text').map(b => b.text).join(' ');
-    }
+    console.log('Final text length:', finalText.length);
+    console.log('Final text preview:', finalText.slice(0, 400));
 
-    console.log('Final text preview:', finalText.slice(0, 300));
+    // Try to extract JSON array from the response
+    // Claude sometimes wraps it in markdown or adds preamble text
+    let results = [];
 
-    // Strip markdown fences if present
-    let jsonText = finalText
+    // Method 1: strip markdown and find array
+    let clean = finalText
       .replace(/```json\s*/gi, '')
       .replace(/```\s*/g, '')
       .trim();
 
-    // Find the JSON array boundaries
-    const arrStart = jsonText.indexOf('[');
-    const arrEnd = jsonText.lastIndexOf(']');
+    const arrStart = clean.indexOf('[');
+    const arrEnd = clean.lastIndexOf(']');
 
-    if (arrStart === -1 || arrEnd === -1 || arrEnd <= arrStart) {
-      console.error('No JSON array found in response. Full text:', finalText.slice(0, 1000));
-      return res.status(500).json({ 
-        error: 'No results array found in response',
-        preview: finalText.slice(0, 500)
-      });
+    if (arrStart !== -1 && arrEnd > arrStart) {
+      try {
+        results = JSON.parse(clean.slice(arrStart, arrEnd + 1));
+        console.log(`Parsed ${results.length} results`);
+      } catch (e) {
+        console.error('JSON parse failed:', e.message);
+        // Method 2: try to find individual objects and build array
+        const objMatches = clean.match(/\{[^{}]+\}/g);
+        if (objMatches) {
+          results = objMatches.map(s => { try { return JSON.parse(s); } catch(e) { return null; } }).filter(Boolean);
+          console.log(`Fallback parsed ${results.length} objects`);
+        }
+      }
     }
 
-    let results = [];
-    try {
-      results = JSON.parse(jsonText.slice(arrStart, arrEnd + 1));
-    } catch (e) {
-      console.error('JSON parse error:', e.message);
-      return res.status(500).json({ 
-        error: 'Failed to parse results: ' + e.message,
-        preview: jsonText.slice(arrStart, arrStart + 500)
+    // If still no results, return a helpful error with what we got
+    if (!results.length) {
+      console.error('No results parsed. Full final text:', finalText.slice(0, 2000));
+      return res.status(500).json({
+        error: 'Search completed but could not parse results. Try a different query.',
+        debug: finalText.slice(0, 500)
       });
     }
 
