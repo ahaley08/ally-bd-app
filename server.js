@@ -144,6 +144,12 @@ app.post('/api/npi-search', async (req, res) => {
       } else {
         if (city) url += `&city=${encodeURIComponent(city)}`;
         if (state) url += `&state=${encodeURIComponent(state)}`;
+        // Note: state-only searches without city use organization_name wildcard
+        // but the frontend now always sends city+state pairs, so this is a safety fallback
+        if (!city && !zipCode) {
+          if (enumType === 'NPI-2') url += `&organization_name=*`;
+          else url += `&last_name=*`;
+        }
       }
 
       // Add taxonomy description filter if provided (server-side pre-filter)
