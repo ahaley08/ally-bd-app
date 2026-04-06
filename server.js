@@ -284,132 +284,133 @@ app.post('/api/web-search', async (req, res) => {
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set.' });
 
-  try {
-    // Single-shot approach: ask Claude to search AND format in one request
-    // The web_search tool is server-executed by Anthropic — Claude uses it internally
-    // We just need to make ONE request and wait for end_turn
-    const prompt = `Search the web for: "${query} ${location}"
-
-Find ${category} in ${location} that may need behavioral health or psychiatric services.
-
-After searching, return ONLY a JSON array like this (no other text, no markdown):
-[{"name":"Example Org","address":"123 Main St","city":"Birmingham","state":"AL","phone":"(205) 555-0100","website":"www.example.com","description":"Brief description","source":"example.com"}]
-
-Include up to 15 real organizations. Return the raw JSON array only.`;
-
-    const postData = JSON.stringify({
+  // Helper to call Anthropic API
+  async function callClaude(messages) {
+    const body = JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 5000,
+      max_tokens: 4000,
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      tool_choice: { type: 'auto' },
-      messages: [{ role: 'user', content: prompt }]
+      messages
     });
-
-    // Make initial request — Anthropic executes web searches server-side
-    // The response will contain tool_use blocks (searches) followed by a text block (results)
-    // We may need to loop if Claude does multiple searches before answering
-    let messages = [{ role: 'user', content: prompt }];
-    let finalText = '';
-    let attempts = 0;
-    const MAX_TURNS = 8;
-
-    while (attempts < MAX_TURNS) {
-      attempts++;
-
-      const data = await new Promise((resolve, reject) => {
-        const opts = {
-          hostname: 'api.anthropic.com',
-          path: '/v1/messages',
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'anthropic-version': '2023-06-01',
-            'anthropic-beta': 'web-search-2025-03-05',
-            'x-api-key': ANTHROPIC_API_KEY,
-            'Content-Length': Buffer.byteLength(postData)
-          }
-        };
-        // Use current messages for this turn
-        const body = JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 5000,
-          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-          tool_choice: { type: 'auto' },
-          messages
+    return new Promise((resolve, reject) => {
+      const req2 = https.request({
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'web-search-2025-03-05',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'Content-Length': Buffer.byteLength(body)
+        }
+      }, (r) => {
+        let b = '';
+        r.on('data', c => b += c);
+        r.on('end', () => {
+          try {
+            const parsed = JSON.parse(b);
+            console.log('Claude response:', JSON.stringify({
+              stop_reason: parsed.stop_reason,
+              error: parsed.error,
+              content_types: (parsed.content||[]).map(x=>x.type)
+            }));
+            resolve(parsed);
+          } catch(e) { reject(new Error('Bad JSON: ' + b.slice(0,300))); }
         });
-        const req2 = https.request({ ...opts, headers: { ...opts.headers, 'Content-Length': Buffer.byteLength(body) } }, (r) => {
-          let b = '';
-          r.on('data', c => b += c);
-          r.on('end', () => { try { resolve(JSON.parse(b)); } catch(e) { reject(new Error(b.slice(0,300))); } });
-        });
-        req2.on('error', reject);
-        req2.write(body);
-        req2.end();
       });
+      req2.on('error', reject);
+      req2.write(body);
+      req2.end();
+    });
+  }
+
+  try {
+    const userMsg = `Search the web for ${category} in ${location}. Query: "${query} ${location}". ` +
+      `After searching, reply with ONLY a JSON array (no markdown, no explanation). ` +
+      `Each item: {"name":"","address":"","city":"","state":"","phone":"","website":"","description":"","source":""}. ` +
+      `Up to 15 real organizations only.`;
+
+    let messages = [{ role: 'user', content: userMsg }];
+    let allText = '';
+
+    for (let turn = 0; turn < 8; turn++) {
+      const data = await callClaude(messages);
+
+      // Check for API error
+      if (data.error) {
+        console.error('Anthropic API error:', JSON.stringify(data.error));
+        return res.status(500).json({ error: `Anthropic API error: ${data.error.message || JSON.stringify(data.error)}` });
+      }
 
       const content = data.content || [];
-      const stopReason = data.stop_reason;
-      console.log(`Turn ${attempts}: stop=${stopReason} blocks=[${content.map(b=>b.type).join(',')}]`);
 
-      // Collect any text output
-      const texts = content.filter(b => b.type === 'text').map(b => b.text);
-      if (texts.length) finalText = texts.join(' ');
+      // Collect all text blocks from this turn
+      content.filter(b => b.type === 'text').forEach(b => { allText += ' ' + b.text; });
 
-      // If we have a final answer, stop
-      if (stopReason === 'end_turn') break;
+      console.log(`Turn ${turn+1}: stop=${data.stop_reason}, text_so_far=${allText.length} chars`);
 
-      // If Claude wants to use a tool, add the full assistant turn to messages
-      // Anthropic's server-executed tools (web_search) don't need us to send results —
-      // they are executed automatically. We just need to continue the conversation.
-      if (stopReason === 'tool_use') {
+      if (data.stop_reason === 'end_turn') break;
+
+      if (data.stop_reason === 'tool_use') {
+        // Add assistant message and prompt to continue
         messages.push({ role: 'assistant', content });
-        // For server-executed tools, add a continuation message
-        messages.push({ role: 'user', content: 'Continue and provide the JSON array of results.' });
-      } else {
-        break;
+        messages.push({ role: 'user', content: 'Now provide the JSON array of results you found.' });
+        continue;
       }
+
+      // Any other stop reason — break
+      break;
     }
 
-    console.log('Final text (first 500):', finalText.slice(0, 500));
+    allText = allText.trim();
+    console.log('Total text collected:', allText.length, 'chars');
+    console.log('Preview:', allText.slice(0, 400));
 
-    if (!finalText.trim()) {
-      return res.status(500).json({ error: 'No response text from Claude. Check API key and web search beta access.' });
+    if (!allText) {
+      return res.status(500).json({ error: 'Claude returned no text. The web search beta may not be enabled for this API key. Check your Anthropic account at console.anthropic.com.' });
     }
 
-    // Parse JSON from response — try multiple strategies
+    // Parse JSON — try multiple strategies
     let results = [];
+    const clean = allText.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
 
-    // Strategy 1: strip markdown fences, find [...]
-    const clean = finalText.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    // Strategy 1: find outermost [...] 
     const a1 = clean.indexOf('[');
     const a2 = clean.lastIndexOf(']');
     if (a1 !== -1 && a2 > a1) {
-      try {
-        results = JSON.parse(clean.slice(a1, a2 + 1));
-      } catch(e) {
-        console.log('Strategy 1 failed:', e.message);
+      try { results = JSON.parse(clean.slice(a1, a2+1)); }
+      catch(e) { console.log('Array parse failed:', e.message.slice(0,100)); }
+    }
+
+    // Strategy 2: extract individual objects
+    if (!results.length) {
+      let depth = 0, start = -1, objs = [];
+      for (let i = 0; i < clean.length; i++) {
+        if (clean[i] === '{') { if (depth === 0) start = i; depth++; }
+        else if (clean[i] === '}') {
+          depth--;
+          if (depth === 0 && start !== -1) {
+            try { objs.push(JSON.parse(clean.slice(start, i+1))); } catch(e) {}
+            start = -1;
+          }
+        }
       }
-    }
-
-    // Strategy 2: find individual JSON objects
-    if (!results.length) {
-      const objRx = /\{[\s\S]*?"name"[\s\S]*?\}/g;
-      const matches = clean.match(objRx) || [];
-      results = matches.map(s => { try { return JSON.parse(s); } catch(e) { return null; } }).filter(Boolean);
-      if (results.length) console.log('Strategy 2 found', results.length, 'objects');
+      results = objs.filter(o => o.name);
+      if (results.length) console.log('Strategy 2 extracted', results.length, 'objects');
     }
 
     if (!results.length) {
-      console.error('All parsing strategies failed. Final text:', finalText.slice(0, 1000));
+      console.error('Parse failed. Full text:', allText.slice(0,2000));
       return res.status(500).json({
-        error: 'Search ran but results could not be parsed. Check Render logs for details.',
-        preview: finalText.slice(0, 300)
+        error: 'Search ran but results could not be formatted. Try a more specific query.',
+        preview: allText.slice(0, 400)
       });
     }
 
     res.json({ results, query: `${query} ${location}`, count: results.length });
 
-  } catch (e) {
+  } catch(e) {
     console.error('Web search error:', e.message);
     res.status(502).json({ error: 'Search failed: ' + e.message });
   }
