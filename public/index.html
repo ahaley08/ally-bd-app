@@ -4716,6 +4716,10 @@ async function csrcRun(pageId, categoryLabel) {
       body: JSON.stringify({ query, location, category: categoryLabel })
     });
 
+    if (resp.status === 429) {
+      const err = await resp.json();
+      throw new Error(err.error || 'Rate limit — please wait 30 seconds and try again.');
+    }
     if (!resp.ok) {
       const err = await resp.json();
       throw new Error(err.error || `Server error ${resp.status}`);
