@@ -4457,7 +4457,8 @@ async function fsSrcRun(pageId) {
 
   try {
     const loadMsg = document.getElementById(`${pageId}-loading-msg`);
-    const unique = await npiRunCorridorSearch(fsGeo, codes, loadMsg, '', taxDef.enumType);
+    const enumType = taxDef.enumType;
+    const unique = await npiRunCorridorSearch(fsGeo, codes, loadMsg, '', enumType);
 
     // Parse
     const state2 = fsGetState(pageId);
