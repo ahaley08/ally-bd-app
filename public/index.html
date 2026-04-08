@@ -5241,8 +5241,7 @@ function exportToExcel(pageId) {
   const csv = [
     headers.map(h => '"' + h + '"').join(','),
     ...rows.map(row => headers.map(h => '"' + String(row[h]||'').replace(/"/g,'""') + '"').join(','))
-  ].join('
-');
+  ].join('\r\n');
 
   const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
