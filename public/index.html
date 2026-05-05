@@ -5429,9 +5429,18 @@ function rfpFileSelected(e) {
 function rfpReadFile(file) {
   document.getElementById('rfp-file-name').textContent = '📎 ' + file.name;
   const reader = new FileReader();
-  reader.onload = (e) => { rfpFileContent = e.target.result; };
-  // For PDFs just read as text (will get raw text content)
-  reader.readAsText(file);
+  if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+    // Read PDF as base64 for Claude's native PDF vision
+    reader.onload = (e) => {
+      const base64 = e.target.result.split(',')[1];
+      rfpFileContent = '__PDF_BASE64__' + base64;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // Plain text / doc — read as text
+    reader.onload = (e) => { rfpFileContent = e.target.result; };
+    reader.readAsText(file);
+  }
 }
 
 async function rfpAnalyze() {
@@ -5458,7 +5467,11 @@ async function rfpAnalyze() {
     const resp = await fetch('/api/rfp-analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rfpText: rfpText.slice(0, 12000), rfpType })
+      body: JSON.stringify(
+        rfpText.startsWith('__PDF_BASE64__')
+          ? { rfpPdfBase64: rfpText.replace('__PDF_BASE64__', ''), rfpType }
+          : { rfpText: rfpText.slice(0, 12000), rfpType }
+      )
     });
 
     if (!resp.ok) {
