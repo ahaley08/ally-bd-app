@@ -662,6 +662,7 @@
     padding: 7px 16px 7px 28px;
     font-size: 12px;
   }
+  .rfp-grid { grid-template-columns: 1fr !important; }
   @media (max-width: 900px) {
     #sidebar { width: 200px; min-width: 200px; }
     #main { margin-left: 200px; }
@@ -745,6 +746,10 @@
     </div>
   </div>
 
+  <div class="sidebar-label">Tools</div>
+  <div class="nav-item" onclick="showPage('rfp-analyzer')" id="nav-rfp-analyzer">
+    <span class="nav-icon">📄</span> RFP Analyzer
+  </div>
   <div class="sidebar-label">Admin</div>
   <div class="nav-item" onclick="showPage('team')" id="nav-team">
     <span class="nav-icon">👥</span> Team
@@ -3024,6 +3029,123 @@
       </div>
     </div>
   </div>
+  <!-- ═══════════════════════════════ RFP ANALYZER PAGE ══════════════════════ -->
+  <div class="page" id="page-rfp-analyzer">
+
+    <div class="card mb-20">
+      <div class="card-header">
+        <span class="card-title">📄 RFP Analyzer</span>
+        <span style="background:linear-gradient(135deg,#cc785c,#a85c8a);color:#fff;padding:2px 10px;border-radius:4px;font-size:10px;font-weight:700;">Claude AI</span>
+      </div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--text-light);margin:0 0 16px;">Paste or upload an RFP. Claude will extract key details, score the fit for Ally Psychiatry, flag risks, and prep a pipeline entry.</p>
+        <div style="display:flex;gap:0;margin-bottom:12px;">
+          <button class="btn btn-primary btn-sm" id="rfp-tab-paste" onclick="rfpSwitchTab('paste')" style="border-radius:6px 0 0 6px;">✏️ Paste Text</button>
+          <button class="btn btn-outline btn-sm" id="rfp-tab-file" onclick="rfpSwitchTab('file')" style="border-radius:0 6px 6px 0;">📎 Upload File</button>
+        </div>
+        <div id="rfp-panel-paste">
+          <textarea class="form-control" id="rfp-text-input" rows="10"
+            placeholder="Paste the full RFP text here — scope of work, requirements, evaluation criteria, deadlines, contact info, etc."
+            style="font-size:12px;resize:vertical;"></textarea>
+        </div>
+        <div id="rfp-panel-file" style="display:none;">
+          <div id="rfp-drop-zone" onclick="document.getElementById('rfp-file-input').click()"
+            ondragover="rfpDragOver(event)" ondrop="rfpDrop(event)" ondragleave="rfpDragLeave(event)"
+            style="border:2px dashed var(--border);border-radius:8px;padding:40px;text-align:center;cursor:pointer;background:var(--bg);">
+            <div style="font-size:32px;margin-bottom:8px;">📄</div>
+            <div style="font-size:13px;font-weight:600;">Drop PDF or TXT file here, or click to browse</div>
+            <div id="rfp-file-name" style="margin-top:10px;font-size:12px;color:var(--blue);font-weight:600;"></div>
+          </div>
+          <input type="file" id="rfp-file-input" accept=".pdf,.txt,.doc,.docx" style="display:none" onchange="rfpFileSelected(event)">
+        </div>
+        <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;align-items:flex-end;">
+          <div class="form-group" style="flex:1 1 220px;margin:0;">
+            <label class="form-label">RFP Type</label>
+            <select class="form-control" id="rfp-type">
+              <option value="behavioral health services">Behavioral Health Services</option>
+              <option value="psychiatric services">Psychiatric Services</option>
+              <option value="telehealth / telepsychiatry">Telehealth / Telepsychiatry</option>
+              <option value="EAP / employee assistance">EAP / Employee Assistance</option>
+              <option value="correctional mental health">Correctional Mental Health</option>
+              <option value="school mental health">School Mental Health</option>
+              <option value="substance use disorder">Substance Use Disorder</option>
+              <option value="general healthcare services">General Healthcare Services</option>
+              <option value="unknown / analyze and determine">Unknown — Analyze and Determine</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="rfp-analyze-btn" onclick="rfpAnalyze()">✦ Analyze RFP</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="rfp-loading" style="display:none;text-align:center;padding:60px 20px;">
+      <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 16px;"></div>
+      <div style="font-size:14px;font-weight:600;color:var(--blue);">Claude is analyzing the RFP...</div>
+      <div style="font-size:12px;color:var(--text-light);margin-top:6px;">Extracting key details, scoring opportunity fit, identifying risks</div>
+    </div>
+
+    <div id="rfp-results" style="display:none;">
+      <div class="card mb-20" style="border-left:4px solid var(--blue);" id="rfp-score-banner">
+        <div class="card-body" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+          <div style="text-align:center;min-width:80px;">
+            <div style="font-size:40px;font-weight:900;color:var(--blue);" id="rfp-score-val">—</div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:1px;color:var(--text-light);text-transform:uppercase;">Fit Score</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:16px;font-weight:700;" id="rfp-opp-name">—</div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:2px;" id="rfp-issuer">—</div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:4px;font-style:italic;" id="rfp-summary-text"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span id="rfp-badge-type" style="background:var(--blue);color:#fff;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;"></span>
+            <span id="rfp-badge-fit" style="padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;"></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;" class="rfp-grid">
+        <div class="card"><div class="card-header"><span class="card-title" style="font-size:12px;">📋 Key Details</span></div><div class="card-body" id="rfp-details-body" style="font-size:12px;"></div></div>
+        <div class="card"><div class="card-header"><span class="card-title" style="font-size:12px;">🎯 Scope of Work</span></div><div class="card-body" id="rfp-scope-body" style="font-size:12px;"></div></div>
+        <div class="card"><div class="card-header"><span class="card-title" style="font-size:12px;">✅ Why Ally Fits</span></div><div class="card-body" id="rfp-fit-body" style="font-size:12px;"></div></div>
+        <div class="card"><div class="card-header"><span class="card-title" style="font-size:12px;">⚠️ Risks and Flags</span></div><div class="card-body" id="rfp-risks-body" style="font-size:12px;"></div></div>
+        <div class="card"><div class="card-header"><span class="card-title" style="font-size:12px;">📬 Submission Requirements</span></div><div class="card-body" id="rfp-submit-body" style="font-size:12px;"></div></div>
+        <div class="card"><div class="card-header"><span class="card-title" style="font-size:12px;">🚀 Recommended Next Steps</span></div><div class="card-body" id="rfp-next-body" style="font-size:12px;"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title" style="font-size:12px;">➕ Add to Pipeline</span><span style="font-size:11px;color:var(--text-light);">Pre-filled from analysis — review and submit</span></div>
+        <div class="card-body">
+          <div class="form-grid form-grid-2">
+            <div class="form-group"><label class="form-label">Opportunity Name *</label><input class="form-control" id="rfp-pipe-name"></div>
+            <div class="form-group"><label class="form-label">Type</label>
+              <select class="form-control" id="rfp-pipe-type">
+                <option>Hospital - Mgmt/SLA</option><option>Hospital - Employed</option>
+                <option>Hospital - Referral</option><option>Sub - PHP</option>
+                <option>Rural Hospital</option><option>Health System</option>
+                <option>Practice</option><option>Other</option>
+              </select></div>
+            <div class="form-group"><label class="form-label">State</label><input class="form-control" id="rfp-pipe-state" maxlength="2" style="text-transform:uppercase"></div>
+            <div class="form-group"><label class="form-label">City</label><input class="form-control" id="rfp-pipe-city"></div>
+            <div class="form-group"><label class="form-label">Submission Deadline</label><input class="form-control" id="rfp-pipe-deadline" type="date"></div>
+            <div class="form-group"><label class="form-label">Est. Contract Value</label><input class="form-control" id="rfp-pipe-value" placeholder="e.g. $250,000/yr"></div>
+            <div class="form-group" style="grid-column:1/-1;"><label class="form-label">Notes</label><textarea class="form-control" id="rfp-pipe-notes" rows="3"></textarea></div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="btn btn-success" onclick="rfpAddToPipeline()">+ Add to Pipeline</button>
+            <button class="btn btn-outline btn-sm" onclick="rfpReset()">Analyze Another RFP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="rfp-empty" style="text-align:center;padding:60px 20px;">
+      <div style="font-size:48px;margin-bottom:12px;">📄</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Paste or upload an RFP to get started</div>
+      <div style="font-size:13px;color:var(--text-light);max-width:480px;margin:0 auto;">Claude will extract key terms, deadlines, scope, and scoring criteria — then score the opportunity fit for Ally Psychiatry and flag any risks or red flags.</div>
+    </div>
+
+  </div>
+
 </div>
 
 <!-- OPPORTUNITY DETAIL MODAL -->
@@ -3264,6 +3386,7 @@ function showPage(name) {
     'hosp-sourcing':'Hospital Sourcing', 'rhc-sourcing':'RHC / FQHC Sourcing',
     'snf-sourcing':'SNF / LTC Sourcing', 'al-sourcing':'Assisted Living Sourcing',
     'bhc-sourcing':'Community BHC Sourcing', 'sud-sourcing':'Substance Abuse Sourcing',
+    'rfp-analyzer':'RFP Analyzer',
     'corr-sourcing':'Correctional Center Sourcing', 'school-sourcing':'School Sourcing',
     'emp-sourcing':'Employer Sourcing',
     team:'BD Team', import:'Import Data'
@@ -3285,7 +3408,7 @@ function showPage(name) {
   document.getElementById('page-title').textContent = titles[name] || name;
   document.getElementById('page-sub').textContent = subs[name] || 'Business Development Tracker';
   // Hide new opp button on sourcing page
-  const hideBtnPages = ['sourcing','retiring','bh-sourcing','hosp-sourcing','rhc-sourcing','snf-sourcing','al-sourcing','bhc-sourcing','sud-sourcing','corr-sourcing','school-sourcing','emp-sourcing'];
+  const hideBtnPages = ['rfp-analyzer','sourcing','retiring','bh-sourcing','hosp-sourcing','rhc-sourcing','snf-sourcing','al-sourcing','bhc-sourcing','sud-sourcing','corr-sourcing','school-sourcing','emp-sourcing'];
   document.getElementById('topbar-new-opp-btn').style.display = hideBtnPages.includes(name) ? 'none' : '';
   if (name === 'pipeline') renderKanban();
   if (name === 'scorecard') populateScorecardSelect();
@@ -5264,6 +5387,202 @@ function exportGeoLabel(prefix) {
     if (type === 'zip')      return document.getElementById(prefix + '-zip-inp')?.value || 'zip';
   } catch(e) {}
   return 'export';
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  RFP ANALYZER
+// ══════════════════════════════════════════════════════════════════════════════
+
+let rfpFileContent = '';
+let rfpLastAnalysis = null;
+
+function rfpSwitchTab(tab) {
+  document.getElementById('rfp-panel-paste').style.display = tab === 'paste' ? 'block' : 'none';
+  document.getElementById('rfp-panel-file').style.display  = tab === 'file'  ? 'block' : 'none';
+  document.getElementById('rfp-tab-paste').className = 'btn btn-sm ' + (tab === 'paste' ? 'btn-primary' : 'btn-outline');
+  document.getElementById('rfp-tab-file').className  = 'btn btn-sm ' + (tab === 'file'  ? 'btn-primary' : 'btn-outline');
+  document.getElementById('rfp-tab-paste').style.borderRadius = '6px 0 0 6px';
+  document.getElementById('rfp-tab-paste').style.borderRight  = tab === 'paste' ? '' : 'none';
+  document.getElementById('rfp-tab-file').style.borderRadius  = '0 6px 6px 0';
+}
+
+function rfpDragOver(e) {
+  e.preventDefault();
+  document.getElementById('rfp-drop-zone').style.borderColor = 'var(--blue)';
+  document.getElementById('rfp-drop-zone').style.background  = 'rgba(6,82,154,0.04)';
+}
+function rfpDragLeave(e) {
+  document.getElementById('rfp-drop-zone').style.borderColor = 'var(--border)';
+  document.getElementById('rfp-drop-zone').style.background  = 'var(--bg)';
+}
+function rfpDrop(e) {
+  e.preventDefault();
+  rfpDragLeave(e);
+  const file = e.dataTransfer.files[0];
+  if (file) rfpReadFile(file);
+}
+function rfpFileSelected(e) {
+  const file = e.target.files[0];
+  if (file) rfpReadFile(file);
+}
+function rfpReadFile(file) {
+  document.getElementById('rfp-file-name').textContent = '📎 ' + file.name;
+  const reader = new FileReader();
+  reader.onload = (e) => { rfpFileContent = e.target.result; };
+  // For PDFs just read as text (will get raw text content)
+  reader.readAsText(file);
+}
+
+async function rfpAnalyze() {
+  // Get text content
+  const activeTab = document.getElementById('rfp-panel-paste').style.display !== 'none' ? 'paste' : 'file';
+  const rfpText = activeTab === 'paste'
+    ? document.getElementById('rfp-text-input').value.trim()
+    : rfpFileContent.trim();
+
+  if (!rfpText || rfpText.length < 100) {
+    toast('Please paste RFP text or upload a file (minimum 100 characters)', 'error');
+    return;
+  }
+
+  const rfpType = document.getElementById('rfp-type').value;
+  const btn = document.getElementById('rfp-analyze-btn');
+
+  btn.disabled = true; btn.textContent = 'Analyzing...';
+  document.getElementById('rfp-empty').style.display    = 'none';
+  document.getElementById('rfp-results').style.display  = 'none';
+  document.getElementById('rfp-loading').style.display  = 'block';
+
+  try {
+    const resp = await fetch('/api/rfp-analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rfpText: rfpText.slice(0, 12000), rfpType })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error || 'Analysis failed');
+    }
+
+    const data = await resp.json();
+    rfpLastAnalysis = data;
+    rfpRenderResults(data);
+
+  } catch(e) {
+    toast('Analysis failed: ' + e.message, 'error');
+    document.getElementById('rfp-empty').style.display = 'block';
+  }
+
+  document.getElementById('rfp-loading').style.display = 'none';
+  btn.disabled = false; btn.textContent = '✦ Analyze RFP';
+}
+
+function rfpRenderResults(d) {
+  // Score banner
+  const score = d.score || 0;
+  document.getElementById('rfp-score-val').textContent = score;
+  document.getElementById('rfp-score-val').style.color =
+    score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--blue)' : '#e67e22';
+  document.getElementById('rfp-opp-name').textContent = d.opportunityName || 'Unnamed Opportunity';
+  document.getElementById('rfp-issuer').textContent   = d.issuer || '';
+  document.getElementById('rfp-badge-type').textContent = d.serviceType || '';
+  const fitBadge = document.getElementById('rfp-badge-fit');
+  const fitLevel = score >= 75 ? 'Strong Fit' : score >= 50 ? 'Moderate Fit' : 'Low Fit';
+  const fitColor = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--blue)' : '#e67e22';
+  fitBadge.textContent = fitLevel;
+  fitBadge.style.background = fitColor;
+  fitBadge.style.color = '#fff';
+
+  // Key details
+  document.getElementById('rfp-details-body').innerHTML = rfpTable([
+    ['Issuing Organization', d.issuer],
+    ['Location / State',     d.location],
+    ['Service Type',         d.serviceType],
+    ['Contract Duration',    d.contractDuration],
+    ['Est. Contract Value',  d.contractValue],
+    ['Submission Deadline',  d.deadline],
+    ['Contact',              d.contact],
+    ['RFP / Solicitation #', d.rfpNumber],
+  ]);
+
+  // Scope
+  document.getElementById('rfp-scope-body').innerHTML  = rfpList(d.scope || []);
+
+  // Fit
+  document.getElementById('rfp-fit-body').innerHTML    = rfpList(d.fitReasons || []);
+
+  // Risks
+  document.getElementById('rfp-risks-body').innerHTML  = rfpList(d.risks || [], true);
+
+  // Submission
+  document.getElementById('rfp-submit-body').innerHTML = rfpList(d.submissionReqs || []);
+
+  // Next steps
+  document.getElementById('rfp-next-body').innerHTML   = rfpList(d.nextSteps || []);
+
+  // Pre-fill pipeline
+  document.getElementById('rfp-pipe-name').value     = d.opportunityName || '';
+  document.getElementById('rfp-pipe-state').value    = d.state || '';
+  document.getElementById('rfp-pipe-city').value     = d.city || '';
+  document.getElementById('rfp-pipe-value').value    = d.contractValue || '';
+  document.getElementById('rfp-pipe-notes').value    = [
+    d.summary || '',
+    d.deadline ? 'Deadline: ' + d.deadline : '',
+    d.rfpNumber ? 'RFP #: ' + d.rfpNumber : '',
+    d.contact ? 'Contact: ' + d.contact : '',
+  ].filter(Boolean).join('\n');
+
+  // Set deadline date field
+  if (d.deadlineISO) {
+    document.getElementById('rfp-pipe-deadline').value = d.deadlineISO;
+  }
+
+  document.getElementById('rfp-results').style.display = 'block';
+}
+
+function rfpTable(rows) {
+  return rows.filter(([,v]) => v).map(([k,v]) =>
+    `<div style="display:flex;gap:8px;padding:3px 0;border-bottom:1px solid var(--border);">
+      <span style="color:var(--text-light);min-width:140px;flex-shrink:0;">${k}</span>
+      <span style="font-weight:600;">${v}</span>
+    </div>`
+  ).join('') || '<span style="color:var(--text-light)">Not found in RFP</span>';
+}
+
+function rfpList(items, isRisk) {
+  if (!items.length) return '<span style="color:var(--text-light)">None identified</span>';
+  const color = isRisk ? '#e67e22' : 'var(--green)';
+  const icon  = isRisk ? '⚠️' : '✓';
+  return items.map(item =>
+    `<div style="display:flex;gap:8px;padding:3px 0;">
+      <span style="color:${color};flex-shrink:0;">${icon}</span>
+      <span>${item}</span>
+    </div>`
+  ).join('');
+}
+
+function rfpAddToPipeline() {
+  const name = document.getElementById('rfp-pipe-name').value.trim();
+  if (!name) { toast('Opportunity name is required', 'error'); return; }
+  document.getElementById('new-name').value   = name;
+  document.getElementById('new-type').value   = 'Other';
+  document.getElementById('new-state').value  = document.getElementById('rfp-pipe-state').value;
+  document.getElementById('new-city').value   = document.getElementById('rfp-pipe-city').value;
+  document.getElementById('new-source').value = 'Outbound';
+  document.getElementById('new-stage').value  = 'Identified';
+  document.getElementById('new-notes').value  = document.getElementById('rfp-pipe-notes').value;
+  openModal('new-opp-modal');
+}
+
+function rfpReset() {
+  document.getElementById('rfp-text-input').value = '';
+  document.getElementById('rfp-file-name').textContent = '';
+  rfpFileContent = '';
+  rfpLastAnalysis = null;
+  document.getElementById('rfp-results').style.display = 'none';
+  document.getElementById('rfp-empty').style.display   = 'block';
 }
 
 </script>
