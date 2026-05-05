@@ -279,49 +279,61 @@ Write a 2–3 sentence BD analyst note covering: (1) why this is or isn't a stro
 
 // ─── RFP ANALYZER ──────────────────────────────────────────────────────────────
 app.post('/api/rfp-analyze', async (req, res) => {
-  const { rfpText, rfpType } = req.body;
-  if (!rfpText) return res.status(400).json({ error: 'rfpText required' });
+  const { rfpText, rfpPdfBase64, rfpType } = req.body;
+  if (!rfpText && !rfpPdfBase64) return res.status(400).json({ error: 'rfpText or rfpPdfBase64 required' });
 
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set.' });
 
-  const prompt = `You are a healthcare business development analyst for Ally Psychiatry, a multi-state outpatient behavioral health organization operating in TN, KY, AL, and SC. Ally provides outpatient psychiatry, therapy, medication management, and telehealth services.
+  const instructions = `You are a healthcare business development analyst for Ally Psychiatry, a multi-state outpatient behavioral health organization in TN, KY, AL, and SC providing outpatient psychiatry, therapy, medication management, and telehealth.
 
-Analyze this RFP and return a JSON object ONLY (no markdown, no explanation):
+Analyze this RFP (type: ${rfpType}) and return ONLY a valid JSON object — no markdown, no explanation, just raw JSON.
 
-RFP TYPE: ${rfpType}
-
-RFP TEXT:
-${rfpText.slice(0, 10000)}
-
-Return this exact JSON structure:
+Required JSON structure:
 {
-  "opportunityName": "short descriptive name for this opportunity",
-  "issuer": "name of issuing organization",
-  "location": "city, state or region",
+  "opportunityName": "short descriptive name",
+  "issuer": "issuing organization name",
+  "location": "city, state",
   "city": "city only",
   "state": "2-letter state code",
   "serviceType": "type of services requested",
   "contractDuration": "e.g. 1 year with 2 renewal options",
   "contractValue": "estimated value if mentioned, else blank",
   "deadline": "submission deadline in readable format",
-  "deadlineISO": "deadline in YYYY-MM-DD format or blank",
-  "rfpNumber": "RFP or solicitation number if present",
-  "contact": "primary contact name and email/phone if present",
-  "summary": "2-3 sentence plain English summary of what is being requested",
-  "score": <integer 0-100 scoring Ally Psychiatry fit based on: service match 40pts, geography match 20pts, organization type match 20pts, contract size/complexity 20pts>,
-  "scope": ["bullet 1 describing scope item", "bullet 2", ...],
-  "fitReasons": ["reason Ally is a strong fit", ...],
+  "deadlineISO": "deadline YYYY-MM-DD or blank",
+  "rfpNumber": "RFP or solicitation number",
+  "contact": "primary contact name and email/phone",
+  "summary": "2-3 sentence plain English summary",
+  "score": <0-100 integer: service match 40pts + geography 20pts + org type 20pts + contract size/complexity 20pts>,
+  "scope": ["scope item 1", "scope item 2"],
+  "fitReasons": ["reason Ally fits", ...],
   "risks": ["risk or red flag", ...],
-  "submissionReqs": ["required submission item", ...],
+  "submissionReqs": ["required item", ...],
   "nextSteps": ["recommended action", ...]
 }`;
 
   try {
+    // Build message content — PDF gets sent as a document block, text as plain text
+    let userContent;
+    if (rfpPdfBase64) {
+      userContent = [
+        {
+          type: 'document',
+          source: { type: 'base64', media_type: 'application/pdf', data: rfpPdfBase64 }
+        },
+        { type: 'text', text: instructions }
+      ];
+    } else {
+      userContent = `${instructions}
+
+RFP TEXT:
+${rfpText}`;
+    }
+
     const postData = JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-opus-4-5',
       max_tokens: 2000,
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{ role: 'user', content: userContent }]
     });
 
     const data = await new Promise((resolve, reject) => {
@@ -338,19 +350,27 @@ Return this exact JSON structure:
       }, (r) => {
         let b = '';
         r.on('data', c => b += c);
-        r.on('end', () => { try { resolve(JSON.parse(b)); } catch(e) { reject(new Error(b.slice(0,200))); } });
+        r.on('end', () => { try { resolve(JSON.parse(b)); } catch(e) { reject(new Error(b.slice(0,300))); } });
       });
       req2.on('error', reject);
       req2.write(postData);
       req2.end();
     });
 
-    if (data.error) return res.status(500).json({ error: data.error.message || JSON.stringify(data.error) });
+    if (data.error) {
+      console.error('RFP analyze API error:', JSON.stringify(data.error));
+      return res.status(500).json({ error: data.error.message || JSON.stringify(data.error) });
+    }
 
     const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join(' ');
+    console.log('RFP analysis preview:', text.slice(0, 300));
+
     const clean = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
     const j1 = clean.indexOf('{'), j2 = clean.lastIndexOf('}');
-    if (j1 === -1) return res.status(500).json({ error: 'Could not parse analysis. Try again.' });
+    if (j1 === -1) {
+      console.error('No JSON in response:', text.slice(0, 500));
+      return res.status(500).json({ error: 'Could not parse analysis response. Try again.' });
+    }
 
     const result = JSON.parse(clean.slice(j1, j2+1));
     res.json(result);
