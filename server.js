@@ -276,6 +276,91 @@ Write a 2–3 sentence BD analyst note covering: (1) why this is or isn't a stro
 });
 
 
+
+// ─── RFP ANALYZER ──────────────────────────────────────────────────────────────
+app.post('/api/rfp-analyze', async (req, res) => {
+  const { rfpText, rfpType } = req.body;
+  if (!rfpText) return res.status(400).json({ error: 'rfpText required' });
+
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set.' });
+
+  const prompt = `You are a healthcare business development analyst for Ally Psychiatry, a multi-state outpatient behavioral health organization operating in TN, KY, AL, and SC. Ally provides outpatient psychiatry, therapy, medication management, and telehealth services.
+
+Analyze this RFP and return a JSON object ONLY (no markdown, no explanation):
+
+RFP TYPE: ${rfpType}
+
+RFP TEXT:
+${rfpText.slice(0, 10000)}
+
+Return this exact JSON structure:
+{
+  "opportunityName": "short descriptive name for this opportunity",
+  "issuer": "name of issuing organization",
+  "location": "city, state or region",
+  "city": "city only",
+  "state": "2-letter state code",
+  "serviceType": "type of services requested",
+  "contractDuration": "e.g. 1 year with 2 renewal options",
+  "contractValue": "estimated value if mentioned, else blank",
+  "deadline": "submission deadline in readable format",
+  "deadlineISO": "deadline in YYYY-MM-DD format or blank",
+  "rfpNumber": "RFP or solicitation number if present",
+  "contact": "primary contact name and email/phone if present",
+  "summary": "2-3 sentence plain English summary of what is being requested",
+  "score": <integer 0-100 scoring Ally Psychiatry fit based on: service match 40pts, geography match 20pts, organization type match 20pts, contract size/complexity 20pts>,
+  "scope": ["bullet 1 describing scope item", "bullet 2", ...],
+  "fitReasons": ["reason Ally is a strong fit", ...],
+  "risks": ["risk or red flag", ...],
+  "submissionReqs": ["required submission item", ...],
+  "nextSteps": ["recommended action", ...]
+}`;
+
+  try {
+    const postData = JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    const data = await new Promise((resolve, reject) => {
+      const req2 = https.request({
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      }, (r) => {
+        let b = '';
+        r.on('data', c => b += c);
+        r.on('end', () => { try { resolve(JSON.parse(b)); } catch(e) { reject(new Error(b.slice(0,200))); } });
+      });
+      req2.on('error', reject);
+      req2.write(postData);
+      req2.end();
+    });
+
+    if (data.error) return res.status(500).json({ error: data.error.message || JSON.stringify(data.error) });
+
+    const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join(' ');
+    const clean = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    const j1 = clean.indexOf('{'), j2 = clean.lastIndexOf('}');
+    if (j1 === -1) return res.status(500).json({ error: 'Could not parse analysis. Try again.' });
+
+    const result = JSON.parse(clean.slice(j1, j2+1));
+    res.json(result);
+
+  } catch(e) {
+    console.error('RFP analyze error:', e.message);
+    res.status(502).json({ error: 'Analysis failed: ' + e.message });
+  }
+});
+
 // ─── CLAUDE WEB SEARCH ─────────────────────────────────────────────────────────
 app.post('/api/web-search', async (req, res) => {
   const { query, location, category } = req.body;
